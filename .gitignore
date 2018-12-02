@@ -1,0 +1,14 @@
+**/.idea
+**/target
+
+# Mac
+.DS_Store
+
+# Maven
+**/log/
+**/target/
+
+#Gradle
+**/build/
+**/gradle/
+**/.gradle/
