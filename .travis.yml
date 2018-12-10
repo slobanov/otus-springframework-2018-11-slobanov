@@ -1,0 +1,16 @@
+sudo: required
+
+language: java
+
+jdk: openjdk11
+
+addons:
+  sonarcloud:
+    organization: "slobanov-github"
+
+services:
+  - docker
+
+install: true
+script: mvn clean test sonar:sonar deploy
+
