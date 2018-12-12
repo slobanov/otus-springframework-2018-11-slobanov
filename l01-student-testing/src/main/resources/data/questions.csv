@@ -1,0 +1,6 @@
+name,text,answer
+first,2*3?,6
+second,2+2?,4
+third,11-3?,8
+forth,15/3?,5
+fifth,1+4^2?,17
