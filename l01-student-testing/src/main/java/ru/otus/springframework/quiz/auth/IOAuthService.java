@@ -8,7 +8,11 @@ public class IOAuthService implements AuthService {
     private final String firstNameText;
     private final String lastNameText;
 
-    IOAuthService(IOService ioService, String firstNameText, String lastNameText) {
+    public IOAuthService(
+            IOService ioService,
+            String firstNameText,
+            String lastNameText
+    ) {
         this.ioService = ioService;
         this.firstNameText = firstNameText;
         this.lastNameText = lastNameText;

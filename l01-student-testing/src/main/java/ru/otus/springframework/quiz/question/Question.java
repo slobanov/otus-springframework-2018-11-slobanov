@@ -1,10 +1,11 @@
 package ru.otus.springframework.quiz.question;
 
 import lombok.Data;
+import lombok.NonNull;
 
 @Data
 public class Question {
-    private final String name;
-    private final String text;
-    private final String answer;
+    private final @NonNull String name;
+    private final @NonNull String text;
+    private final @NonNull String answer;
 }

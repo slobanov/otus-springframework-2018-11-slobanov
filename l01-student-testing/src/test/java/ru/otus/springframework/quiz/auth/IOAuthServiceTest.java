@@ -14,8 +14,7 @@ class IOAuthServiceTest {
     @ParameterizedTest
     @CsvSource({
             "fName text, lastName text, fName, lastName",
-            "What's your first name?, What's your last name?, Ivan, Ivanov",
-            ",,,"
+            "What's your first name?, What's your last name?, Ivan, Ivanov"
     })
     void authorize(
             String fNameText,

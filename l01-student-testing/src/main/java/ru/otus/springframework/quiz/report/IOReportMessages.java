@@ -8,7 +8,7 @@ import java.util.Map;
 import static java.lang.String.format;
 import static java.lang.System.lineSeparator;
 
-class IOReportMessages {
+public class IOReportMessages {
     private final String headerText;
     private final String resultText;
     private final String actualText;
@@ -16,7 +16,7 @@ class IOReportMessages {
     private final String correctText;
     private final String incorrectText;
 
-    IOReportMessages(Map<String, String> reportMessageMap) {
+    public IOReportMessages(Map<String, String> reportMessageMap) {
         this.headerText = reportMessageMap.get("headerText");
         this.resultText = reportMessageMap.get("resultText");
         this.actualText = reportMessageMap.get("actualText");

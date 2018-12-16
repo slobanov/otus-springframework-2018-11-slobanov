@@ -12,11 +12,11 @@ import java.util.List;
 import static com.fasterxml.jackson.dataformat.csv.CsvSchema.emptySchema;
 
 @Slf4j
-class QuestionCSV implements QuestionDAO {
+public class QuestionCSV implements QuestionDAO {
 
     private final String filePath;
 
-    QuestionCSV(String filePath) {
+    public QuestionCSV(String filePath) {
         this.filePath = filePath;
     }
 

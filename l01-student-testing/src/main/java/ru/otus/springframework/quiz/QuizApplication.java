@@ -2,12 +2,14 @@ package ru.otus.springframework.quiz;
 
 import lombok.extern.slf4j.Slf4j;
 import one.util.streamex.StreamEx;
+import org.springframework.stereotype.Service;
 import ru.otus.springframework.quiz.answer.AnswerService;
 import ru.otus.springframework.quiz.auth.AuthService;
 import ru.otus.springframework.quiz.question.QuestionService;
 import ru.otus.springframework.quiz.report.ReportService;
 
 @Slf4j
+@Service
 class QuizApplication {
     private final QuestionService questionService;
     private final AuthService authService;

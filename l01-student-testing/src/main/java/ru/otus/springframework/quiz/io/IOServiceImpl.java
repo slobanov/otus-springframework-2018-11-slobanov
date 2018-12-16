@@ -1,11 +1,13 @@
 package ru.otus.springframework.quiz.io;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Scanner;
 
+@Service
 @Slf4j
 class IOServiceImpl implements IOService {
 

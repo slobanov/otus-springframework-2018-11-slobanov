@@ -2,6 +2,7 @@ package ru.otus.springframework.quiz.report;
 
 import lombok.extern.slf4j.Slf4j;
 import one.util.streamex.StreamEx;
+import org.springframework.stereotype.Service;
 import ru.otus.springframework.quiz.answer.Answer;
 import ru.otus.springframework.quiz.auth.Student;
 import ru.otus.springframework.quiz.io.IOService;
@@ -9,6 +10,7 @@ import ru.otus.springframework.quiz.io.IOService;
 import java.util.List;
 
 @Slf4j
+@Service
 class IOReportService implements ReportService {
 
     private final IOService ioService;
