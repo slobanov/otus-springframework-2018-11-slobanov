@@ -14,8 +14,6 @@ import ru.otus.springframework.quiz.question.QuestionCSV;
 import ru.otus.springframework.quiz.question.QuestionDAO;
 import ru.otus.springframework.quiz.report.IOReportMessages;
 
-import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -39,17 +37,6 @@ public class Main {
         return new PropertySourcesPlaceholderConfigurer();
     }
     
-    @Bean
-    InputStream inputStream() {
-        return System.in;
-    }
-
-    @SuppressWarnings("UseOfSystemOutOrSystemErr")
-    @Bean
-    PrintStream printStream() {
-        return System.out;
-    }
-
     @Bean
     MessageSource messageSource(
             @Value("${quiz.i8n.auth}") String i8nAuth,

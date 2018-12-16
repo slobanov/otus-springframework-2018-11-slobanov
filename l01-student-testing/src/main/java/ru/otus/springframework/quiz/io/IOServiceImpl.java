@@ -1,6 +1,7 @@
 package ru.otus.springframework.quiz.io;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
@@ -14,7 +15,10 @@ class IOServiceImpl implements IOService {
     private final Scanner scanner;
     private final PrintStream printStream;
 
-    IOServiceImpl(InputStream inputStream, PrintStream printStream) {
+    IOServiceImpl(
+            @Value("#{T(java.lang.System).in}") InputStream inputStream,
+            @Value("#{T(java.lang.System).out}") PrintStream printStream
+    ) {
         this.printStream = printStream;
         this.scanner = new Scanner(inputStream);
     }
