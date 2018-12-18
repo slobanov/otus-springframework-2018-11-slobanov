@@ -1,9 +1,11 @@
 package ru.otus.springframework.quiz.answer;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import ru.otus.springframework.quiz.io.IOService;
 import ru.otus.springframework.quiz.question.Question;
 
+@Service
 @Slf4j
 class IOAnswerService implements AnswerService {
 

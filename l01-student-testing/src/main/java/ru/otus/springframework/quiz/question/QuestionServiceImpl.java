@@ -1,7 +1,10 @@
 package ru.otus.springframework.quiz.question;
 
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 
+@Service
 class QuestionServiceImpl implements QuestionService {
 
     private final QuestionDAO questionDAO;
