@@ -9,7 +9,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.context.MessageSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import ru.otus.springframework.quiz.i18n.I18nService;
 import ru.otus.springframework.quiz.io.IOService;
 
 import java.util.Locale;
@@ -18,42 +19,27 @@ import java.util.stream.Stream;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-class MainTest {
+class QuizApplicationConfigurationTest {
 
-    private Main main;
+    private QuizApplicationConfiguration quizApplicationConfiguration;
 
     @BeforeEach
     void init() {
-        main = new Main();
-    }
-    @ParameterizedTest
-    @MethodSource("localeProvider")
-    void locale(String localeTag, Locale locale) {
-        assertThat(main.locale(localeTag), equalTo(locale));
-    }
-
-    private static Stream<Arguments> localeProvider() {
-        return StreamEx.of(
-                Arguments.of("ru-RU", Locale.forLanguageTag("ru-RU")),
-                Arguments.of("en", Locale.ENGLISH),
-                Arguments.of("random", Locale.getDefault())
-        );
+        quizApplicationConfiguration = new QuizApplicationConfiguration();
     }
 
     @ParameterizedTest
     @MethodSource("authParamProvider")
     void authService(String fName, String lName, Locale locale) {
-        var messageSource = spy(MessageSource.class);
-        var inOrder = inOrder(messageSource);
+        var i18nService = spy(I18nService.class);
+        var inOrder = inOrder(i18nService);
 
-        main.authService(messageSource, mock(IOService.class), locale, fName, lName);
+        quizApplicationConfiguration.authService(mock(IOService.class), i18nService, fName, lName);
 
-        inOrder.verify(messageSource).getMessage(eq(fName), any(), eq(locale));
-        inOrder.verify(messageSource).getMessage(eq(lName), any(), eq(locale));
+        inOrder.verify(i18nService).getMessage(fName);
+        inOrder.verify(i18nService).getMessage(lName);
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -66,36 +52,28 @@ class MainTest {
     }
 
     @ParameterizedTest
-    @MethodSource("questionParamProvider")
-    void questionDAO(String qPath, Locale locale) {
-        var messageSource = spy(MessageSource.class);
-        var inOrder = inOrder(messageSource);
+    @ValueSource(strings = {"some-path", "1/2/3", "qwerty"})
+    void questionDAO(String qPath) {
+        var i18nService = spy(I18nService.class);
+        var inOrder = inOrder(i18nService);
 
-        main.questionDAO(messageSource, locale, qPath);
-        inOrder.verify(messageSource).getMessage(eq(qPath), any(), eq(locale));
+        quizApplicationConfiguration.questionDAO(i18nService, qPath);
+        inOrder.verify(i18nService).getMessage(qPath);
         inOrder.verifyNoMoreInteractions();
-    }
-
-    private static Stream<Arguments> questionParamProvider() {
-        return StreamEx.of(
-                Arguments.of("some-path", Locale.FRANCE),
-                Arguments.of("1/2/3", Locale.getDefault()),
-                Arguments.of("qwerty", Locale.forLanguageTag("en-US"))
-        );
     }
 
     @ParameterizedTest
     @CsvSource({
-            "i8n_tst/auth/auth_msg,i8n_tst/question/questions,en-US,test_auth_en_US,test_qst_en_US",
-            "i8n_tst/auth/auth_msg,i8n_tst/question/questions,ru-RU,test_auth_ru_RU,test_qst_ru_RU",
+            "i18n_tst/auth/auth_msg,i18n_tst/question/questions,en-US,test_auth_en_US,test_qst_en_US",
+            "i18n_tst/auth/auth_msg,i18n_tst/question/questions,ru-RU,test_auth_ru_RU,test_qst_ru_RU",
     })
     void messageSource(
-            String i8nAuth,
-            String i8nQuestions,
+            String i18nAuth,
+            String i18nQuestions,
             String tag,
             String authLine,
             String questionLine) {
-        var messageSource = main.messageSource(i8nAuth, i8nQuestions);
+        var messageSource = quizApplicationConfiguration.messageSource(i18nAuth, i18nQuestions);
         var locale = Locale.forLanguageTag(tag);
 
         assertThat(
@@ -109,11 +87,9 @@ class MainTest {
     }
 
     @Test
-    void ioReportMessages() throws NoSuchFieldException {
-        var reportMessages = main.ioReportMessages(
-                Locale.getDefault(), "i8n_tst/report/report_msg"
-        );
+    void ioReportMessages() {
 
+        var i18Service = mock(I18nService.class);
         var textMap = Map.of(
                 "headerText", "headerText1",
                 "resultText", "resultText2",
@@ -123,11 +99,16 @@ class MainTest {
                 "incorrectText", "incorrectText6"
         );
 
+        var pathToReportMsg = "i18n_tst/report/report_msg";
+        when(i18Service.getAllEntries(pathToReportMsg)).thenReturn(textMap);
+
+        var reportMessages = quizApplicationConfiguration.ioReportMessages(
+                i18Service, pathToReportMsg
+        );
+
         EntryStream.of(textMap).mapKeys(
                 key -> sneakyGetDeclaredStringField(reportMessages, key)
-        ).forEach(pair -> {
-            assertThat(pair.getKey(), equalTo(pair.getValue()));
-        });
+        ).forEach(pair -> assertThat(pair.getKey(), equalTo(pair.getValue())));
     }
 
     @SneakyThrows
