@@ -33,7 +33,6 @@ class IOReportMessagesTest {
         ioReportMessages = new IOReportMessages(reportMessageMap);
     }
 
-
     @ParameterizedTest
     @MethodSource("studentProvider")
     void formatHeader(Student student, String result) {
@@ -55,7 +54,6 @@ class IOReportMessagesTest {
     @ParameterizedTest
     @MethodSource("answerProvider")
     void formatAnswer(Answer answer, String result) {
-
         assertThat(
                 ioReportMessages.formatAnswer(answer),
                 equalTo(result)

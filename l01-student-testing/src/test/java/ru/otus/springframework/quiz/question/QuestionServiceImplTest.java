@@ -4,6 +4,10 @@ import one.util.streamex.StreamEx;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -11,18 +15,22 @@ import java.util.stream.Stream;
 import static java.lang.System.lineSeparator;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@SpringBootTest
+@ActiveProfiles("test")
 class QuestionServiceImplTest {
+
+    @MockBean
+    private QuestionDAO questionDAO;
+
+    @Autowired
+    private QuestionService questionService;
 
     @ParameterizedTest
     @MethodSource("questionDataProvider")
     void allQuestions(List<Question> questions) {
-        var questionDAO = mock(QuestionDAO.class);
         when(questionDAO.readAll()).thenReturn(questions);
-
-        var questionService = new QuestionServiceImpl(questionDAO);
         assertThat(questionService.allQuestions(), equalTo(questions));
     }
 

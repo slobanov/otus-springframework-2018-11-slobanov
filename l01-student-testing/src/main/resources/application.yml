@@ -1,0 +1,23 @@
+spring:
+  profiles.active: "production"
+  banner.location: "classpath:/banner.txt"
+
+logging.level:
+  root: "INFO"
+  ru.otus.springframework.quiz.Main: "WARN"
+
+quiz:
+  locale: "en-US"
+  question.csv-file: "/data/questions.csv"
+
+  i18n:
+    auth:
+      bundle: "i18n/auth/auth_msg"
+      first-name: "auth.first.name"
+      last-name: "auth.last.name"
+
+    report.bundle: "i18n/report/report_msg"
+
+    question:
+      bundle: "i18n/question/questions"
+      path: "questions.csv.path"

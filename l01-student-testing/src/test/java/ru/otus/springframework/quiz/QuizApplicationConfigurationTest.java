@@ -2,28 +2,36 @@ package ru.otus.springframework.quiz;
 
 import lombok.SneakyThrows;
 import one.util.streamex.EntryStream;
-import one.util.streamex.StreamEx;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 import ru.otus.springframework.quiz.i18n.I18nService;
 import ru.otus.springframework.quiz.io.IOService;
 
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.when;
 
+@SpringBootTest
+@ActiveProfiles("test")
 class QuizApplicationConfigurationTest {
 
     private QuizApplicationConfiguration quizApplicationConfiguration;
+
+    @MockBean
+    private I18nService i18nService;
+
+    @MockBean
+    private IOService ioService;
 
     @BeforeEach
     void init() {
@@ -31,30 +39,24 @@ class QuizApplicationConfigurationTest {
     }
 
     @ParameterizedTest
-    @MethodSource("authParamProvider")
-    void authService(String fName, String lName, Locale locale) {
-        var i18nService = spy(I18nService.class);
+    @CsvSource({
+            "fname,lname",
+            "123,qwe",
+            "Hello,World"
+    })
+    void authService(String fName, String lName) {
         var inOrder = inOrder(i18nService);
 
-        quizApplicationConfiguration.authService(mock(IOService.class), i18nService, fName, lName);
+        quizApplicationConfiguration.authService(ioService, i18nService, fName, lName);
 
         inOrder.verify(i18nService).getMessage(fName);
         inOrder.verify(i18nService).getMessage(lName);
         inOrder.verifyNoMoreInteractions();
     }
 
-    private static Stream<Arguments> authParamProvider() {
-        return StreamEx.of(
-                Arguments.of("fname", "lname", Locale.FRANCE),
-                Arguments.of("123", "qwe", Locale.getDefault()),
-                Arguments.of("Hello", "World", Locale.forLanguageTag("en-US"))
-        );
-    }
-
     @ParameterizedTest
     @ValueSource(strings = {"some-path", "1/2/3", "qwerty"})
     void questionDAO(String qPath) {
-        var i18nService = spy(I18nService.class);
         var inOrder = inOrder(i18nService);
 
         quizApplicationConfiguration.questionDAO(i18nService, qPath);
@@ -88,8 +90,6 @@ class QuizApplicationConfigurationTest {
 
     @Test
     void ioReportMessages() {
-
-        var i18Service = mock(I18nService.class);
         var textMap = Map.of(
                 "headerText", "headerText1",
                 "resultText", "resultText2",
@@ -100,10 +100,10 @@ class QuizApplicationConfigurationTest {
         );
 
         var pathToReportMsg = "i18n_tst/report/report_msg";
-        when(i18Service.getAllEntries(pathToReportMsg)).thenReturn(textMap);
+        when(i18nService.getAllEntries(pathToReportMsg)).thenReturn(textMap);
 
         var reportMessages = quizApplicationConfiguration.ioReportMessages(
-                i18Service, pathToReportMsg
+                i18nService, pathToReportMsg
         );
 
         EntryStream.of(textMap).mapKeys(

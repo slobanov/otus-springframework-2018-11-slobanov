@@ -4,6 +4,10 @@ import one.util.streamex.StreamEx;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 import ru.otus.springframework.quiz.answer.Answer;
 import ru.otus.springframework.quiz.auth.Student;
 import ru.otus.springframework.quiz.io.IOService;
@@ -14,14 +18,22 @@ import java.util.stream.Stream;
 
 import static org.mockito.Mockito.*;
 
+@SpringBootTest
+@ActiveProfiles("test")
 class IOReportServiceTest {
+
+    @MockBean
+    private IOService ioService;
+
+    @MockBean
+    private IOReportMessages ioReportMessages;
+
+    @Autowired
+    private ReportService reportService;
 
     @ParameterizedTest
     @MethodSource("answersProvider")
     void makeReport(List<Answer> answers, int correct) {
-        var ioService = mock(IOService.class);
-        var ioReportMessages = mock(IOReportMessages.class);
-
         var student = new Student("Test", "Testov");
         var studentRepr = student.getFirstName() + ' ' + student.getLastName();
 
@@ -34,8 +46,6 @@ class IOReportServiceTest {
         when(ioReportMessages.formatResult(
                 correct, answers.size())
         ).thenReturn(resultRepr);
-
-        var reportService = new IOReportService(ioService, ioReportMessages);
 
         reportService.makeReport(student, answers);
 
