@@ -8,8 +8,8 @@ import ru.otus.springframework.quiz.auth.AuthService;
 import ru.otus.springframework.quiz.question.QuestionService;
 import ru.otus.springframework.quiz.report.ReportService;
 
-@Slf4j
 @Service
+@Slf4j
 class QuizApplication {
     private final QuestionService questionService;
     private final AuthService authService;
@@ -36,4 +36,5 @@ class QuizApplication {
 
         reportService.makeReport(student, answers);
     }
+
 }
