@@ -26,35 +26,32 @@ class IOReportServiceTest {
     private IOService ioService;
 
     @MockBean
-    private IOReportMessages ioReportMessages;
+    private ReportUtils reportUtils;
 
     @Autowired
     private ReportService reportService;
 
     @ParameterizedTest
     @MethodSource("answersProvider")
-    void makeReport(List<Answer> answers, int correct) {
+    void makeReport(List<Answer> answers) {
+
         var student = new Student("Test", "Testov");
-        var studentRepr = student.getFirstName() + ' ' + student.getLastName();
+        var report = StreamEx.of(answers)
+                .map(Answer::getAnswerText)
+                .prepend(student.getFirstName() + ' ' + student.getLastName())
+                .toList();
 
-        when(ioReportMessages.formatHeader(student)).thenReturn(studentRepr);
-        answers.forEach(a -> when(
-                ioReportMessages.formatAnswer(a)).thenReturn(a.getAnswerText()
-        ));
-
-        var resultRepr = correct + ":" + answers.size();
-        when(ioReportMessages.formatResult(
-                correct, answers.size())
-        ).thenReturn(resultRepr);
+        when(reportUtils.reportStream(student, answers))
+                .thenReturn(StreamEx.of(report));
 
         reportService.makeReport(student, answers);
 
+        verify(reportUtils).reportStream(student, answers);
         var inOrder = inOrder(ioService);
 
-        inOrder.verify(ioService).writeLine(studentRepr);
-        answers.forEach(a -> inOrder.verify(ioService).writeLine(a.getAnswerText()));
-        inOrder.verify(ioService).writeLine(resultRepr);
+        report.forEach(s -> inOrder.verify(ioService).writeLine(s));
         inOrder.verifyNoMoreInteractions();
+
     }
 
     private static Stream<Arguments> answersProvider() {
@@ -63,9 +60,9 @@ class IOReportServiceTest {
                     List.of(
                         new Answer(new Question("1", "single", "one"),
                             "one")
-                    ), 1
+                    )
                 ),
-                Arguments.of(List.of(), 0),
+                Arguments.of(List.of()),
                 Arguments.of(
                         List.of(
                             new Answer(new Question(
@@ -78,7 +75,7 @@ class IOReportServiceTest {
                                     "other text",
                                     "new answer"
                             ), "wrong answer")
-                        ), 1
+                        )
                 )
         );
     }

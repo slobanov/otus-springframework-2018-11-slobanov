@@ -1,0 +1,2 @@
+quiz.prompt: "quiz:>"
+spring.shell.interactive.enabled: false

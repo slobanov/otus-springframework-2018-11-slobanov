@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import ru.otus.springframework.quiz.auth.AuthService;
 import ru.otus.springframework.quiz.auth.IOAuthService;
@@ -38,6 +39,7 @@ class QuizApplicationConfiguration {
     }
 
     @Bean
+    @Profile("!shell")
     AuthService authService(
             IOService ioService,
             I18nService i18nService,

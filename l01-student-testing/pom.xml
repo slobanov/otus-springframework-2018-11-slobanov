@@ -11,10 +11,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>l01-student-testing</artifactId>
-    <version>3.0.0</version>
+    <version>4.0.0</version>
 
     <properties>
         <jackson.csv.version>2.9.7</jackson.csv.version>
+        <spring.shell.version>2.0.1.RELEASE</spring.shell.version>
     </properties>
 
     <build>
@@ -32,6 +33,13 @@
             <artifactId>jackson-dataformat-csv</artifactId>
             <version>${jackson.csv.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.shell</groupId>
+            <artifactId>spring-shell-starter</artifactId>
+            <version>${spring.shell.version}</version>
+        </dependency>
+
     </dependencies>
 
 </project>

@@ -12,3 +12,5 @@
 **/build/
 **/gradle/
 **/.gradle/
+
+spring-shell.log
