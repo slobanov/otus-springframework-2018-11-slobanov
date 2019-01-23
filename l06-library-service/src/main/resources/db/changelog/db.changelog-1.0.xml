@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <changeSet author="s.lobanov" id="changelog-1.0">
+        <createTable tableName="AUTHOR">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="FIRST_NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="LAST_NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="GENRE">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+        <createTable tableName="BOOK">
+            <column name="ID" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="ISBN" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="TITLE" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="BOOK_TO_AUTHOR">
+            <column name="BOOK_ID" type="BIGINT">
+                <constraints nullable="false"
+                             foreignKeyName="FK_BOOK_ID_AUTHOR"
+                             references="BOOK(ID)"
+                             deleteCascade="true"/>
+            </column>
+            <column name="AUTHOR_ID" type="BIGINT">
+                <constraints nullable="false"
+                             foreignKeyName="FK_AUTHOR_ID"
+                             references="AUTHOR(ID)"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="BOOK_TO_AUTHOR"
+                       columnNames="BOOK_ID, AUTHOR_ID"
+                       constraintName="PK_BOOK_TO_AUTHOR"/>
+
+        <createTable tableName="BOOK_TO_GENRE">
+            <column name="BOOK_ID" type="BIGINT">
+                <constraints nullable="false"
+                             foreignKeyName="FK_BOOK_ID_GENRE"
+                             references="BOOK(ID)"
+                             deleteCascade="true"/>
+            </column>
+            <column name="GENRE_ID" type="BIGINT">
+                <constraints nullable="false"
+                             foreignKeyName="FK_GENRE_ID"
+                             references="GENRE(id)"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="BOOK_TO_GENRE"
+                       columnNames="BOOK_ID, GENRE_ID"
+                       constraintName="PK_BOOK_TO_GENRE"/>
+
+        <createView viewName="V_BOOK">
+            SELECT BOOK.ID AS BOOK_ID,
+                   BOOK.ISBN,
+                   BOOK.TITLE,
+                   BOOK_TO_AUTHOR.AUTHOR_ID,
+                   BOOK_TO_GENRE.GENRE_ID
+              FROM BOOK
+              JOIN BOOK_TO_AUTHOR
+                ON BOOK.ID = BOOK_TO_AUTHOR.BOOK_ID
+              JOIN BOOK_TO_GENRE
+                ON BOOK.ID = BOOK_TO_GENRE.BOOK_ID
+             ORDER BY BOOK_ID
+        </createView>
+    </changeSet>
+</databaseChangeLog>

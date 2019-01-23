@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+    <changeSet author="s.lobanov" id="test-data">
+        <loadData tableName="BOOK" file="db/changelog/data/test_book.csv"/>
+        <loadData tableName="AUTHOR" file="db/changelog/data/test_author.csv"/>
+        <loadData tableName="GENRE" file="db/changelog/data/test_genre.csv"/>
+        <loadData tableName="BOOK_TO_AUTHOR" file="db/changelog/data/test_book_to_author.csv"/>
+        <loadData tableName="BOOK_TO_GENRE" file="db/changelog/data/test_book_to_genre.csv"/>
+    </changeSet>
+</databaseChangeLog>
