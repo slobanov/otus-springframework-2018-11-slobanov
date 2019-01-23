@@ -1,5 +1,5 @@
 spring:
-  profiles.active: "production"
+  profiles.active: "shell"
   banner.location: "classpath:/banner.txt"
 
 logging.level:
@@ -8,7 +8,6 @@ logging.level:
 
 quiz:
   locale: "en-US"
-  question.csv-file: "/data/questions.csv"
 
   i18n:
     auth:
