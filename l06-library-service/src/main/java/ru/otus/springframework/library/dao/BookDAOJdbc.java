@@ -28,13 +28,13 @@ class BookDAOJdbc implements BookDAO {
     private final NamedParameterJdbcOperations jdbcOperations;
 
     private static final String JOINED_SQL_REQUEST =
-               "SELECT BOOK.ID," +
+               "SELECT BOOK.ID as BOOK_ID," +
                "       BOOK.ISBN," +
                "       BOOK.TITLE," +
-               "       AUTHOR.ID," +
+               "       AUTHOR.ID as AUTHOR_ID," +
                "       AUTHOR.FIRST_NAME," +
                "       AUTHOR.LAST_NAME," +
-               "       GENRE.ID," +
+               "       GENRE.ID as GENRE_ID," +
                "       GENRE.NAME " +
                "       FROM BOOK " +
                "       JOIN BOOK_TO_AUTHOR " +
@@ -59,20 +59,20 @@ class BookDAOJdbc implements BookDAO {
         var genres = new HashMap<Long, String>();
 
         while (rs.next()) {
-            var bookId = rs.getLong("BOOK.ID");
-            isbnMap.putIfAbsent(bookId, rs.getString("BOOK.ISBN"));
-            titleMap.putIfAbsent(bookId, rs.getString("BOOK.TITLE"));
+            var bookId = rs.getLong("BOOK_ID");
+            isbnMap.putIfAbsent(bookId, rs.getString("ISBN"));
+            titleMap.putIfAbsent(bookId, rs.getString("TITLE"));
             bookAuthorIds.putIfAbsent(bookId, new HashSet<>());
             bookGenreIds.putIfAbsent(bookId, new HashSet<>());
 
-            var authorId = rs.getLong("AUTHOR.ID");
+            var authorId = rs.getLong("AUTHOR_ID");
             bookAuthorIds.get(bookId).add(authorId);
-            firstNameMap.putIfAbsent(authorId, rs.getString("AUTHOR.FIRST_NAME"));
-            lastNameMap.putIfAbsent(authorId, rs.getString("AUTHOR.LAST_NAME"));
+            firstNameMap.putIfAbsent(authorId, rs.getString("FIRST_NAME"));
+            lastNameMap.putIfAbsent(authorId, rs.getString("LAST_NAME"));
 
-            var genreId = rs.getLong("GENRE.ID");
+            var genreId = rs.getLong("GENRE_ID");
             bookGenreIds.get(bookId).add(genreId);
-            genres.putIfAbsent(genreId, rs.getString("GENRE.NAME"));
+            genres.putIfAbsent(genreId, rs.getString("NAME"));
 
             bookAuthorIds.get(bookId).add(authorId);
         }
