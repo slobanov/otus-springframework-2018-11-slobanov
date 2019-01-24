@@ -1,5 +1,6 @@
 package ru.otus.springframework.library.books;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import one.util.streamex.EntryStream;
 import org.springframework.stereotype.Service;
@@ -16,17 +17,12 @@ import static ru.otus.springframework.library.utils.OptionalUtils.asSingle;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 class BookServiceImpl implements BookService {
 
     private final BookDAO bookDAO;
     private final SimpleDAO<Author> authorDAO;
     private final SimpleDAO<Genre> genreDAO;
-
-    BookServiceImpl(BookDAO bookDAO, SimpleDAO<Author> authorDAO, SimpleDAO<Genre> genreDAO) {
-        this.bookDAO = bookDAO;
-        this.authorDAO = authorDAO;
-        this.genreDAO = genreDAO;
-    }
 
     @Override
     public List<Book> all() {

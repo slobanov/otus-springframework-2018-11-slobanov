@@ -1,5 +1,6 @@
 package ru.otus.springframework.library.genres;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -12,13 +13,10 @@ import static ru.otus.springframework.library.utils.OptionalUtils.asSingle;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 class GenreServiceImpl implements GenreService {
 
     private final SimpleDAO<Genre> genreDAO;
-
-    GenreServiceImpl(SimpleDAO<Genre> genreDAO) {
-        this.genreDAO = genreDAO;
-    }
 
     @Override
     public List<Genre> all() {

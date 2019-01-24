@@ -1,5 +1,6 @@
 package ru.otus.springframework.library.cli;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
@@ -17,6 +18,7 @@ import javax.validation.constraints.NotBlank;
 import static java.util.Arrays.asList;
 
 @ShellComponent
+@RequiredArgsConstructor
 class LibraryShell {
 
     private final BookService bookService;
@@ -24,18 +26,6 @@ class LibraryShell {
     private final GenreService genreService;
 
     private final PresenterService presenterService;
-
-    LibraryShell(
-            BookService bookService,
-            AuthorService authorService,
-            GenreService genreService,
-            PresenterService presenterService
-    ) {
-        this.bookService = bookService;
-        this.authorService = authorService;
-        this.genreService = genreService;
-        this.presenterService = presenterService;
-    }
 
     @ShellMethod("List all books in the library.")
     Table allBooks() {

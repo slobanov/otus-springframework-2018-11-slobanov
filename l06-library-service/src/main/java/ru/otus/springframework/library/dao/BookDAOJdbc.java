@@ -1,5 +1,6 @@
 package ru.otus.springframework.library.dao;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import one.util.streamex.StreamEx;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -22,6 +23,7 @@ import static ru.otus.springframework.library.utils.OptionalUtils.flatten;
 
 @Repository
 @Slf4j
+@RequiredArgsConstructor
 class BookDAOJdbc implements BookDAO {
 
     private final NamedParameterJdbcOperations jdbcOperations;
@@ -29,18 +31,6 @@ class BookDAOJdbc implements BookDAO {
     private final SimpleDAO<BookBase> bookBaseDAO;
     private final SimpleDAO<Author> authorDAO;
     private final SimpleDAO<Genre> genreDAO;
-
-    BookDAOJdbc(
-            NamedParameterJdbcOperations jdbcOperations,
-            SimpleDAO<BookBase> bookBaseDAO,
-            SimpleDAO<Author> authorDAO,
-            SimpleDAO<Genre> genreDAO
-    ) {
-        this.jdbcOperations = jdbcOperations;
-        this.bookBaseDAO = bookBaseDAO;
-        this.authorDAO = authorDAO;
-        this.genreDAO = genreDAO;
-    }
 
     @Override
     public List<Book> fetchAll() {

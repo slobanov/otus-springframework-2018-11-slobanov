@@ -1,5 +1,6 @@
 package ru.otus.springframework.library.authors;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import ru.otus.springframework.library.dao.SimpleDAO;
@@ -8,13 +9,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 class AuthorServiceImpl implements AuthorService {
 
     private final SimpleDAO<Author> authorDAO;
-
-    AuthorServiceImpl(SimpleDAO<Author> authorDAO) {
-        this.authorDAO = authorDAO;
-    }
 
     @Override
     public List<Author> all() {
