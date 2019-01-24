@@ -3,6 +3,7 @@ package ru.otus.springframework.library.dao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import one.util.streamex.StreamEx;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -10,11 +11,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.springframework.library.authors.Author;
 import ru.otus.springframework.library.books.Book;
-import ru.otus.springframework.library.books.BookBase;
 import ru.otus.springframework.library.genres.Genre;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.Map.of;
 import static java.util.Objects.requireNonNull;
@@ -28,37 +27,80 @@ class BookDAOJdbc implements BookDAO {
 
     private final NamedParameterJdbcOperations jdbcOperations;
 
-    private final SimpleDAO<BookBase> bookBaseDAO;
-    private final SimpleDAO<Author> authorDAO;
-    private final SimpleDAO<Genre> genreDAO;
+    private static final String JOINED_SQL_REQUEST =
+               "SELECT BOOK.ID," +
+               "       BOOK.ISBN," +
+               "       BOOK.TITLE," +
+               "       AUTHOR.ID," +
+               "       AUTHOR.FIRST_NAME," +
+               "       AUTHOR.LAST_NAME," +
+               "       GENRE.ID," +
+               "       GENRE.NAME " +
+               "       FROM BOOK " +
+               "       JOIN BOOK_TO_AUTHOR " +
+               "         ON BOOK.ID = BOOK_TO_AUTHOR.BOOK_ID " +
+               "       JOIN AUTHOR " +
+               "         ON AUTHOR.ID = BOOK_TO_AUTHOR.AUTHOR_ID " +
+               "       JOIN BOOK_TO_GENRE " +
+               "         ON BOOK.ID = BOOK_TO_GENRE.BOOK_ID " +
+               "       JOIN GENRE " +
+               "         ON GENRE.ID = BOOK_TO_GENRE.GENRE_ID ";
+
+    private static final ResultSetExtractor<List<Book>> BOOK_EXTRACTOR = (rs) -> {
+
+        var isbnMap = new HashMap<Long, String>();
+        var titleMap = new HashMap<Long, String>();
+        var bookAuthorIds = new HashMap<Long, Set<Long>>();
+        var bookGenreIds = new HashMap<Long, Set<Long>>();
+
+        var firstNameMap = new HashMap<Long, String>();
+        var lastNameMap = new HashMap<Long, String>();
+
+        var genres = new HashMap<Long, String>();
+
+        while (rs.next()) {
+            var bookId = rs.getLong("BOOK.ID");
+            isbnMap.putIfAbsent(bookId, rs.getString("BOOK.ISBN"));
+            titleMap.putIfAbsent(bookId, rs.getString("BOOK.TITLE"));
+            bookAuthorIds.putIfAbsent(bookId, new HashSet<>());
+            bookGenreIds.putIfAbsent(bookId, new HashSet<>());
+
+            var authorId = rs.getLong("AUTHOR.ID");
+            bookAuthorIds.get(bookId).add(authorId);
+            firstNameMap.putIfAbsent(authorId, rs.getString("AUTHOR.FIRST_NAME"));
+            lastNameMap.putIfAbsent(authorId, rs.getString("AUTHOR.LAST_NAME"));
+
+            var genreId = rs.getLong("GENRE.ID");
+            bookGenreIds.get(bookId).add(genreId);
+            genres.putIfAbsent(genreId, rs.getString("GENRE.NAME"));
+
+            bookAuthorIds.get(bookId).add(authorId);
+        }
+
+        return StreamEx.of(isbnMap.keySet())
+                .map(bookId -> {
+                    var authors = StreamEx.of(bookAuthorIds.get(bookId))
+                            .map(aId -> new Author(aId, firstNameMap.get(aId), lastNameMap.get(aId)))
+                            .toList();
+
+                    var genreObjs = StreamEx.of(bookGenreIds.get(bookId))
+                            .map(gId -> new Genre(gId, genres.get(gId)))
+                            .toList();
+
+                    return new Book(
+                            bookId,
+                            isbnMap.get(bookId),
+                            titleMap.get(bookId),
+                            authors,
+                            genreObjs
+                    );
+                }).toList();
+    };
+
 
     @Override
     public List<Book> fetchAll() {
-        var bookBases = bookBaseDAO.fetchAll();
-        return StreamEx.of(bookBases).map(this::fromBookBase).toList();
-    }
-
-    private Book fromBookBase(BookBase bookBase) {
-        var bookId = bookBase.getId();
-
-        var authorIds = jdbcOperations.queryForList(
-                "SELECT AUTHOR_ID FROM BOOK_TO_AUTHOR WHERE BOOK_ID = :BOOK_ID",
-                of("BOOK_ID", bookId),
-                Long.class
-        );
-        var genreIds = jdbcOperations.queryForList(
-                "SELECT GENRE_ID FROM BOOK_TO_GENRE WHERE BOOK_ID = :BOOK_ID",
-                of("BOOK_ID", bookId),
-                Long.class
-        );
-
-        return new Book(
-                bookId,
-                bookBase.getIsbn(),
-                bookBase.getTitle(),
-                flatten(StreamEx.of(authorIds).map(authorDAO::findById)),
-                flatten(StreamEx.of(genreIds).map(genreDAO::findById))
-        );
+        return jdbcOperations.query(JOINED_SQL_REQUEST, BOOK_EXTRACTOR);
     }
 
     @Override
@@ -83,12 +125,20 @@ class BookDAOJdbc implements BookDAO {
 
     @Override
     public Optional<Book> findById(Long id) {
-        return bookBaseDAO.findById(id).map(this::fromBookBase);
+        return asSingle(jdbcOperations.query(
+                JOINED_SQL_REQUEST + " WHERE BOOK.ID = :ID",
+                of("ID", id),
+                BOOK_EXTRACTOR
+        ));
     }
 
     @Override
     public Optional<Book> findByIsbn(String isbn) {
-        return asSingle(bookBaseDAO.findByField("ISBN", isbn)).map(this::fromBookBase);
+        return asSingle(jdbcOperations.query(
+                JOINED_SQL_REQUEST + " WHERE BOOK.ISBN = :ISBN",
+                of("ISBN", isbn),
+                BOOK_EXTRACTOR
+        ));
     }
 
     @Override
@@ -126,8 +176,11 @@ class BookDAOJdbc implements BookDAO {
 
     @Override
     public Optional<Book> deleteById(Long id) {
-        var book = bookBaseDAO.findById(id).map(this::fromBookBase);
-        bookBaseDAO.deleteById(id);
+        var book = findById(id);
+        jdbcOperations.update(
+                "DELETE FROM BOOK WHERE ID = :ID",
+                of("ID", id)
+        );
         return book;
     }
 

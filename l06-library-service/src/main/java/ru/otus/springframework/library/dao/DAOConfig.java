@@ -4,7 +4,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import ru.otus.springframework.library.authors.Author;
-import ru.otus.springframework.library.books.BookBase;
 import ru.otus.springframework.library.genres.Genre;
 
 import static java.util.Map.of;
@@ -43,21 +42,4 @@ class DAOConfig {
         );
     }
 
-    @Bean
-    SimpleDAO<BookBase> bookBaseDAO(NamedParameterJdbcOperations jdbcOperations) {
-        return new SimpleDAOImpl<>(
-                "BOOK",
-                (r, i) -> new BookBase(
-                        r.getLong("ID"),
-                        r.getString("ISBN"),
-                        r.getString("TITLE")
-                ),
-                of(
-                        "ISBN", "isbn",
-                        "TITLE", "title"
-
-                ),
-                jdbcOperations
-        );
-    }
 }

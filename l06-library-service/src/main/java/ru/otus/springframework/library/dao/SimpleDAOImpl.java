@@ -27,6 +27,8 @@ class SimpleDAOImpl<T> implements SimpleDAO<T> {
 
     private final NamedParameterJdbcOperations jdbcOperations;
 
+    private final String insertQueryTemplate;
+
     SimpleDAOImpl(
             String tableName,
             RowMapper<T> rowMapper,
@@ -36,6 +38,21 @@ class SimpleDAOImpl<T> implements SimpleDAO<T> {
         this.rowMapper = rowMapper;
         this.sqlParams = new HashMap<>(sqlParams);
         this.jdbcOperations = jdbcOperations;
+
+        this.insertQueryTemplate = buildInsertQueryTemplate();
+    }
+
+    private String buildInsertQueryTemplate() {
+        var insertParams = EntryStream.of(sqlParams).mapValues(v -> ':' + v)
+                .reduce((acc, curr) -> entry(
+                        acc.getKey() + ", " + curr.getKey(),
+                        acc.getValue() + ", " + curr.getValue()
+                )).map(e -> format("(%s) VALUES (%s)", e.getKey(), e.getValue())).orElse("");
+
+        var query = "INSERT INTO " + tableName + insertParams;
+        log.debug("insert query for table [{}]: {}", tableName, query);
+
+        return query;
     }
 
     @Override
@@ -71,17 +88,12 @@ class SimpleDAOImpl<T> implements SimpleDAO<T> {
     @Override
     public T save(T obj) {
         log.debug("save[{}]: {}", tableName, obj);
-        var insertParams = EntryStream.of(sqlParams).mapValues(v -> ':' + v)
-                .reduce((acc, curr) -> entry(
-                        acc.getKey() + ", " + curr.getKey(),
-                        acc.getValue() + ", " + curr.getValue()
-                )).map(e -> format("(%s) VALUES (%s)", e.getKey(), e.getValue())).orElse("");
 
         var keyHolder = new GeneratedKeyHolder();
         var sqlProperties = new BeanPropertySqlParameterSource(obj);
 
         jdbcOperations.update(
-                "INSERT INTO " + tableName + insertParams,
+                insertQueryTemplate,
                 sqlProperties,
                 keyHolder,
                 new String[] { "id" }
