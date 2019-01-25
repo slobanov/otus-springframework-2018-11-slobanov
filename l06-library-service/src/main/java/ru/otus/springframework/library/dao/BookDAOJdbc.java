@@ -18,7 +18,6 @@ import java.util.*;
 import static java.util.Map.of;
 import static java.util.Objects.requireNonNull;
 import static ru.otus.springframework.library.utils.OptionalUtils.asSingle;
-import static ru.otus.springframework.library.utils.OptionalUtils.flatten;
 
 @Repository
 @Slf4j
@@ -105,22 +104,30 @@ class BookDAOJdbc implements BookDAO {
 
     @Override
     public List<Book> findByAuthor(Author author) {
-        var bookIds = jdbcOperations.queryForList(
-                "SELECT BOOK_ID FROM BOOK_TO_AUTHOR WHERE AUTHOR_ID = :AUTHOR_ID",
-                of("AUTHOR_ID", author.getId()),
-                Long.class
+        return jdbcOperations.query(
+                JOINED_SQL_REQUEST +
+                        " WHERE BOOK.ID IN (" +
+                        "   SELECT BOOK_TO_AUTHOR.BOOK_ID" +
+                        "     FROM BOOK_TO_AUTHOR" +
+                        "    WHERE AUTHOR_ID = :ID " +
+                        ")",
+                of("ID", author.getId()),
+                BOOK_EXTRACTOR
         );
-        return flatten(StreamEx.of(bookIds).map(this::findById));
     }
 
     @Override
     public List<Book> findByGenre(Genre genre) {
-        var bookIds = jdbcOperations.queryForList(
-                "SELECT BOOK_ID FROM BOOK_TO_GENRE WHERE GENRE_ID = :GENRE_ID",
-                of("GENRE_ID", genre.getId()),
-                Long.class
+        return jdbcOperations.query(
+                JOINED_SQL_REQUEST +
+                        " WHERE BOOK.ID IN (" +
+                        "   SELECT BOOK_TO_GENRE.BOOK_ID" +
+                        "     FROM BOOK_TO_GENRE" +
+                        "    WHERE GENRE_ID = :ID " +
+                        ")",
+                of("ID", genre.getId()),
+                BOOK_EXTRACTOR
         );
-        return flatten(StreamEx.of(bookIds).map(this::findById));
     }
 
     @Override
