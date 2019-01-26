@@ -1,0 +1,12 @@
+spring:
+  banner.location: "classpath:/banner.txt"
+  liquibase:
+    change-log: "classpath:db/changelog/db.changelog-master.xml"
+
+logging.level:
+  root: "WARN"
+
+library:
+  prompt: "library:>"
+
+

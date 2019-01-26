@@ -15,7 +15,6 @@
 
     <properties>
         <jackson.csv.version>2.9.7</jackson.csv.version>
-        <spring.shell.version>2.0.1.RELEASE</spring.shell.version>
     </properties>
 
     <build>
@@ -37,7 +36,6 @@
         <dependency>
             <groupId>org.springframework.shell</groupId>
             <artifactId>spring-shell-starter</artifactId>
-            <version>${spring.shell.version}</version>
         </dependency>
 
     </dependencies>

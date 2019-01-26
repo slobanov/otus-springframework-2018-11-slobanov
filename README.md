@@ -9,6 +9,7 @@
 
 Contents:
 * [l01-student-testing](l01-student-testing)
+* [l06-library-service](l06-library-service)
 - - - -
 
 Sergey Lobanov
