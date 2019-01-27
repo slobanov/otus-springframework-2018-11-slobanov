@@ -1,19 +1,22 @@
 package ru.otus.springframework.library.authors;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
+
+import javax.persistence.*;
 
 import static java.lang.String.format;
 
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
+@NoArgsConstructor
+@Entity
 public class Author {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private final @NonNull String firstName;
-    private final @NonNull String lastName;
+    private @NonNull String firstName;
+    private @NonNull String lastName;
 
     public String displayName() {
         return format("%s %s [%s]", firstName, lastName, id);

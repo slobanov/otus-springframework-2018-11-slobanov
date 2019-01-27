@@ -42,7 +42,7 @@ class BookServiceImpl implements BookService {
     @Override
     public List<Book> ofGenre(String genre) {
         var genreObj = asSingle(genreDAO.findByField("NAME", genre));
-        return genreObj.isPresent() ? bookDAO.findByGenre(genreObj.get()) : Collections.emptyList();
+        return genreObj.map(bookDAO::findByGenre).orElse(Collections.emptyList());
     }
 
     @Override
@@ -69,11 +69,12 @@ class BookServiceImpl implements BookService {
                 isbn,
                 title,
                 authors,
-                genreObjs
+                genreObjs,
+                Set.of()
         ));
     }
 
-    private List<Author> ensureAuthors(Collection<Long> authorsIds) {
+    private Set<Author> ensureAuthors(Collection<Long> authorsIds) {
         var authorsMap = of(authorsIds).mapToEntry(authorDAO::findById).toMap();
 
         var notFoundAuthors = EntryStream.of(authorsMap).filterValues(Optional::isEmpty).toMap();
@@ -85,10 +86,10 @@ class BookServiceImpl implements BookService {
             );
         }
 
-        return of(authorsMap.values()).flatMap(Optional::stream).toList();
+        return of(authorsMap.values()).flatMap(Optional::stream).toSet();
     }
 
-    private List<Genre> ensureGenres(Collection<String> genres) {
+    private Set<Genre> ensureGenres(Collection<String> genres) {
         var genreObjsMap = of(genres)
                 .mapToEntry(g -> asSingle(genreDAO.findByField("NAME", g)))
                 .toMap();
@@ -102,7 +103,7 @@ class BookServiceImpl implements BookService {
             );
         }
 
-        return genresOfBook.toList();
+        return genresOfBook.toSet();
     }
 
 

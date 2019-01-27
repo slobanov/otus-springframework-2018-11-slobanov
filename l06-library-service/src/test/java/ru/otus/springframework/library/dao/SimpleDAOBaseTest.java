@@ -7,14 +7,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 import ru.otus.springframework.library.authors.Author;
 import ru.otus.springframework.library.books.BookService;
+import ru.otus.springframework.library.comments.Comment;
 import ru.otus.springframework.library.genres.Genre;
 
 import java.util.List;
@@ -25,22 +22,21 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.params.provider.Arguments.of;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class SimpleDAOImplTest {
+@Transactional
+public abstract class SimpleDAOBaseTest {
 
     @SpyBean
-    private SimpleDAO<Author> authorDAO;
+    protected SimpleDAO<Author> authorDAO;
 
     @Autowired
     private BookService bookService;
 
     @Autowired
     private SimpleDAO<Genre> genreDAO;
+
+    @Autowired
+    private SimpleDAO<Comment> commentDAO;
 
     @Test
     void fetchAll() {
@@ -109,12 +105,6 @@ class SimpleDAOImplTest {
         assertThat(allAuthors, hasSize(6));
     }
 
-    @Test
-    void saveFail() {
-        when(authorDAO.findById(anyLong())).thenReturn(Optional.empty());
-        assertThrows(IllegalStateException.class, () -> authorDAO.save(new Author("1", "2")));
-    }
-
     @ParameterizedTest
     @MethodSource("authorProvider")
     void deleteById(Long id, Optional<Author> expectedAuthor) {
@@ -122,14 +112,26 @@ class SimpleDAOImplTest {
             var author = authorDAO.deleteById(id);
             assertThat(author, equalTo(expectedAuthor));
             author.ifPresent(a -> assertThat(authorDAO.fetchAll(), not(hasItem(a))));
-        } else {
-            assertThrows(DataIntegrityViolationException.class, () -> authorDAO.deleteById(id));
         }
     }
 
     @Test
     void saveSQLFail() {
-        assertThrows(DuplicateKeyException.class, () -> genreDAO.save(new Genre("genre1")));
+        assertThrows(RuntimeException.class, () -> genreDAO.save(new Genre("genre1")));
+    }
+
+    @Test
+    void saveComment() {
+        var commentText = "new comment";
+        var bookId = 1L;
+        var commentsBefore = commentDAO.fetchAll();
+        var resultComment = commentDAO.save(new Comment(bookId, commentText));
+        var commentsAfter = commentDAO.fetchAll();
+
+        assertThat(resultComment.getText(), equalTo(commentText));
+        assertThat(commentsAfter.size() - commentsBefore.size(), equalTo(1));
+        assertThat(commentsBefore, not(contains(resultComment)));
+        assertThat(commentsAfter, hasItem(resultComment));
     }
 
 }

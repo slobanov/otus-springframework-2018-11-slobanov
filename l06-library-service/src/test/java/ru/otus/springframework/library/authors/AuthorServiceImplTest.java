@@ -7,6 +7,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -75,6 +76,12 @@ class AuthorServiceImplTest {
 
         assertThat(fName, equalTo(author.getFirstName()));
         assertThat(lName, equalTo(author.getLastName()));
+    }
+
+    @Test
+    void newAuthorFailed() {
+        when(authorDAO.save(ArgumentMatchers.any(Author.class))).thenThrow(RuntimeException.class);
+        assertThrows(RuntimeException.class, () -> authorService.newAuthor("1", "2"));
     }
 
     @ParameterizedTest

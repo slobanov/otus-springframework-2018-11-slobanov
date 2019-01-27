@@ -14,15 +14,13 @@ import ru.otus.springframework.library.genres.Genre;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static java.util.Collections.emptyList;
 import static one.util.streamex.StreamEx.of;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -112,23 +110,24 @@ class BookServiceImplTest {
 
         var authorIds = List.of(1L, 42L);
         var authorMap = Map.of(
-                authorIds.get(0), mock(Author.class),
-                authorIds.get(1), mock(Author.class)
+                1L, mock(Author.class),
+                42L, mock(Author.class)
         );
         authorMap.forEach((id, a) -> when(authorDAO.findById(id)).thenReturn(Optional.of(a)));
 
         var genres = List.of("g1", "g2");
         var genreMap = Map.of(
-                genres.get(0), mock(Genre.class),
-                genres.get(1), mock(Genre.class)
+                "g1", mock(Genre.class),
+                "g2", mock(Genre.class)
         );
         genreMap.forEach((name, g) -> when(genreDAO.findByField("NAME", name)).thenReturn(List.of(g)));
 
         var book = new Book(
                 isbn,
                 title,
-                of(authorMap.values()).toList(),
-                of(genreMap.values()).toList()
+                of(authorMap.values()).toSet(),
+                of(genreMap.values()).toSet(),
+                Set.of()
         );
 
         when(bookService.withIsbn(isbn)).thenReturn(Optional.empty());
@@ -189,27 +188,27 @@ class BookServiceImplTest {
 
         var authorIds = List.of(1L, 42L);
         var authorMap = Map.of(
-                authorIds.get(0), mock(Author.class),
-                authorIds.get(1), mock(Author.class)
+                1L, mock(Author.class),
+                42L, mock(Author.class)
         );
         authorMap.forEach((id, a) -> when(authorDAO.findById(id)).thenReturn(Optional.of(a)));
 
         var genres = List.of("g1", "g2");
         var genreMap = Map.of(
-                genres.get(0), mock(Genre.class),
-                genres.get(1), mock(Genre.class)
+                "g1", mock(Genre.class),
+                "g2", mock(Genre.class)
         );
-        genreMap.forEach((name, g) -> {
-            when(genreDAO.findByField("NAME", name))
-                            .thenReturn("g1".equals(name) ? List.of(g) : List.of());
-            }
+        genreMap.forEach((name, g) ->
+                when(genreDAO.findByField("NAME", name))
+                        .thenReturn("g1".equals(name) ? List.of(g) : List.of())
         );
 
         var book = new Book(
                 isbn,
                 title,
-                of(authorMap.values()).toList(),
-                of(genreMap.values()).toList()
+                of(authorMap.values()).toSet(),
+                of(genreMap.values()).toSet(),
+                Set.of()
         );
 
         when(bookService.withIsbn(isbn)).thenReturn(Optional.empty());
@@ -250,7 +249,7 @@ class BookServiceImplTest {
     void addAuthor() {
         var bookId = 1L;
         var bookIsbn = "isbn";
-        var book = new Book(bookId, bookIsbn, "title", List.of(), List.of());
+        var book = new Book(bookId, bookIsbn, "title", Set.of(), Set.of(), Set.of());
         var authorId = 2L;
         var author = new Author(authorId, "fName", "lName");
 
@@ -269,7 +268,7 @@ class BookServiceImplTest {
     void addAuthorNoAuthor() {
         var bookId = 1L;
         var bookIsbn = "isbn";
-        var book = new Book(bookId, bookIsbn, "title", List.of(), List.of());
+        var book = new Book(bookId, bookIsbn, "title", Set.of(), Set.of(), Set.of());
         var authorId = 2L;
 
         when(bookDAO.findByIsbn(bookIsbn)).thenReturn(Optional.of(book));
@@ -286,7 +285,7 @@ class BookServiceImplTest {
         var bookIsbn = "isbn";
         var authorId = 2L;
         var author = new Author(authorId, "fName", "lName");
-        var book = new Book(bookId, bookIsbn, "title", List.of(author), List.of());
+        var book = new Book(bookId, bookIsbn, "title", Set.of(author), Set.of(), Set.of());
 
         when(bookDAO.findByIsbn(bookIsbn)).thenReturn(Optional.of(book));
         when(authorDAO.findById(authorId)).thenReturn(Optional.of(author));
@@ -314,7 +313,7 @@ class BookServiceImplTest {
     void addGenre() {
         var bookIsbn = "isbn";
         var bookId = 1L;
-        var book = new Book(bookId, bookIsbn, "title", List.of(), List.of());
+        var book = new Book(bookId, bookIsbn, "title", Set.of(), Set.of(), Set.of());
         var genre = "genre";
         var genreObj = new Genre(2L, genre);
 
@@ -336,7 +335,7 @@ class BookServiceImplTest {
         var bookId = 1L;
         var genre = "genre";
         var genreObj = new Genre(2L, genre);
-        var book = new Book(bookId, bookIsbn, "title", List.of(), List.of(genreObj));
+        var book = new Book(bookId, bookIsbn, "title", Set.of(), Set.of(genreObj), Set.of());
 
         when(bookDAO.findByIsbn(bookIsbn)).thenReturn(Optional.of(book));
         when(genreDAO.findByField("NAME", genre)).thenReturn(List.of(genreObj));

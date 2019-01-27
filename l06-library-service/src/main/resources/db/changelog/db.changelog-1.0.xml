@@ -69,19 +69,5 @@
         <addPrimaryKey tableName="BOOK_TO_GENRE"
                        columnNames="BOOK_ID, GENRE_ID"
                        constraintName="PK_BOOK_TO_GENRE"/>
-
-        <createView viewName="V_BOOK">
-            SELECT BOOK.ID AS BOOK_ID,
-                   BOOK.ISBN,
-                   BOOK.TITLE,
-                   BOOK_TO_AUTHOR.AUTHOR_ID,
-                   BOOK_TO_GENRE.GENRE_ID
-              FROM BOOK
-              JOIN BOOK_TO_AUTHOR
-                ON BOOK.ID = BOOK_TO_AUTHOR.BOOK_ID
-              JOIN BOOK_TO_GENRE
-                ON BOOK.ID = BOOK_TO_GENRE.BOOK_ID
-             ORDER BY BOOK_ID
-        </createView>
     </changeSet>
 </databaseChangeLog>

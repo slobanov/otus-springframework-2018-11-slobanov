@@ -1,3 +1,7 @@
+library:
+  prompt: "library:>"
+  dao.provider: "jpa"
+
 spring:
   banner.location: "classpath:/banner.txt"
   liquibase:
@@ -5,8 +9,5 @@ spring:
 
 logging.level:
   root: "WARN"
-
-library:
-  prompt: "library:>"
 
 

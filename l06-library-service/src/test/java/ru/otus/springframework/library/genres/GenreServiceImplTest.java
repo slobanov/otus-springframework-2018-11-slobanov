@@ -16,9 +16,7 @@ import java.util.Optional;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -50,9 +48,9 @@ class GenreServiceImplTest {
     @Test
     void newGenreDuplicate() {
         var genre = "genre";
-        when(genreDAO.findByField("NAME", genre)).thenThrow(DataIntegrityViolationException.class);
+        when(genreDAO.findByField("NAME", genre)).thenReturn(List.of(mock(Genre.class)));
 
-        assertThrows(DataIntegrityViolationException.class, () -> genreService.newGenre(genre));
+        assertThrows(IllegalArgumentException.class, () -> genreService.newGenre(genre));
         verify(genreDAO).findByField("NAME", genre);
     }
 

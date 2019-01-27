@@ -25,7 +25,6 @@ Here is a toy example:
 ```bash
 $ docker run --name postgres_db \
     -e POSTGRES_PASSWORD=password123 \
-    -p5432:5432 \
     -d postgres
 $ docker run -it --rm --link=postgres_db \
     -e DB=postgres \
@@ -33,6 +32,11 @@ $ docker run -it --rm --link=postgres_db \
     -e PG_URL=jdbc:postgresql://postgres_db:5432/postgres \
     otusspring201811slobanov/l06-library-service
 ```
+Also, it is possible to switch between DAO providers - app use JPA via Hibernate,
+to use plain old JDBC set parameter `library.dao.provider=jdbc`
+(for docker image there is corresponding ENV `DAO_PROVIDER` parameter).
+
+<br>
 - - - -
 
 Sergey Lobanov

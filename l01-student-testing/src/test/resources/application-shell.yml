@@ -1,2 +1,5 @@
 quiz.prompt: "quiz:>"
-spring.shell.interactive.enabled: false
+
+spring:
+  shell.interactive.enabled: false
+  main.banner-mode: "off"
