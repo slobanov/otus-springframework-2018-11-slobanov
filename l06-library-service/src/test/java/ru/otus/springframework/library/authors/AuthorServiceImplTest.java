@@ -1,6 +1,7 @@
 package ru.otus.springframework.library.authors;
 
 import one.util.streamex.EntryStream;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -8,11 +9,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.test.context.ActiveProfiles;
 import ru.otus.springframework.library.dao.SimpleDAO;
 
 import java.util.Optional;
@@ -22,19 +19,19 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.params.provider.Arguments.of;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-@SpringBootTest
-@ActiveProfiles("test")
 class AuthorServiceImplTest {
 
-    @Autowired
     private AuthorService authorService;
 
-    @MockBean
     private SimpleDAO<Author> authorDAO;
+
+    @BeforeEach
+    void init() {
+        authorDAO = (SimpleDAO<Author>) mock(SimpleDAO.class);
+        authorService = new AuthorServiceImpl(authorDAO);
+    }
 
     @Test
     void all() {

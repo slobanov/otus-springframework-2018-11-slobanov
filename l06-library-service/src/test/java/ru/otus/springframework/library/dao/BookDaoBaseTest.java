@@ -9,11 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.springframework.library.authors.Author;
-import ru.otus.springframework.library.authors.AuthorService;
 import ru.otus.springframework.library.books.Book;
 import ru.otus.springframework.library.comments.Comment;
 import ru.otus.springframework.library.genres.Genre;
-import ru.otus.springframework.library.genres.GenreService;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -34,10 +32,10 @@ public abstract class BookDaoBaseTest {
     private BookDAO bookDAOJdbc;
 
     @Autowired
-    private AuthorService authorService;
+    private SimpleDAO<Author> authorDAO;
 
     @Autowired
-    private GenreService genreService;
+    private SimpleDAO<Genre> genreDAO;
 
     @Test
     void fetchAll() {
@@ -231,7 +229,7 @@ public abstract class BookDaoBaseTest {
     @Test
     void addAuthor() {
         var bookId = 1L;
-        var author = authorService.withId(3L).orElseThrow();
+        var author = authorDAO.findById(3L).orElseThrow();
 
         var bookBefore = bookDAOJdbc.findById(bookId);
         assertThat(bookBefore.isPresent(), equalTo(true));
@@ -245,7 +243,7 @@ public abstract class BookDaoBaseTest {
     @Test
     void addGenre() {
         var bookId = 1L;
-        var genre = genreService.newGenre("new genre");
+        var genre = genreDAO.save(new Genre("new genre"));
 
         var bookBefore = bookDAOJdbc.findById(bookId);
         assertThat(bookBefore.isPresent(), equalTo(true));

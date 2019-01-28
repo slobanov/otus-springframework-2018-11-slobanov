@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.springframework.library.authors.Author;
-import ru.otus.springframework.library.books.BookService;
 import ru.otus.springframework.library.comments.Comment;
 import ru.otus.springframework.library.genres.Genre;
 
@@ -30,7 +29,7 @@ public abstract class SimpleDAOBaseTest {
     protected SimpleDAO<Author> authorDAO;
 
     @Autowired
-    private BookService bookService;
+    private BookDAO bookDAO;
 
     @Autowired
     private SimpleDAO<Genre> genreDAO;
@@ -108,7 +107,7 @@ public abstract class SimpleDAOBaseTest {
     @ParameterizedTest
     @MethodSource("authorProvider")
     void deleteById(Long id, Optional<Author> expectedAuthor) {
-        if (bookService.writtenBy(id).isEmpty()) {
+        if (expectedAuthor.isPresent() && bookDAO.findByAuthor(expectedAuthor.get()).isEmpty()) {
             var author = authorDAO.deleteById(id);
             assertThat(author, equalTo(expectedAuthor));
             author.ifPresent(a -> assertThat(authorDAO.fetchAll(), not(hasItem(a))));

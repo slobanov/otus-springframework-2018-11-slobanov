@@ -1,15 +1,12 @@
 package ru.otus.springframework.library.comments;
 
 import one.util.streamex.StreamEx;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
 import ru.otus.springframework.library.books.Book;
 import ru.otus.springframework.library.dao.BookDAO;
 import ru.otus.springframework.library.dao.SimpleDAO;
@@ -23,18 +20,20 @@ import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
-@ActiveProfiles("test")
 class CommentServiceImplTest {
 
-    @Autowired
     private CommentService commentService;
 
-    @MockBean
     private SimpleDAO<Comment> commentDAO;
-
-    @MockBean
     private BookDAO bookDAO;
+
+    @BeforeEach
+    void init() {
+        commentDAO = (SimpleDAO<Comment>) mock(SimpleDAO.class);
+        bookDAO = mock(BookDAO.class);
+
+        commentService = new CommentServiceImpl(bookDAO, commentDAO);
+    }
 
     @ParameterizedTest
     @MethodSource("commentProvider")

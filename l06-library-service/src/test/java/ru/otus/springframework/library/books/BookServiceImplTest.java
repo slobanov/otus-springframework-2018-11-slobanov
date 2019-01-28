@@ -1,11 +1,7 @@
 package ru.otus.springframework.library.books;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 import ru.otus.springframework.library.authors.Author;
 import ru.otus.springframework.library.dao.BookDAO;
 import ru.otus.springframework.library.dao.SimpleDAO;
@@ -23,22 +19,22 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class BookServiceImplTest {
 
-    @Autowired
     private BookService bookService;
 
-    @MockBean
     private BookDAO bookDAO;
-
-    @MockBean
     private SimpleDAO<Author> authorDAO;
-
-    @MockBean
     private SimpleDAO<Genre> genreDAO;
+
+    @BeforeEach
+    void init() {
+        bookDAO = mock(BookDAO.class);
+        authorDAO = (SimpleDAO<Author>) mock(SimpleDAO.class);
+        genreDAO = (SimpleDAO<Genre>) mock(SimpleDAO.class);
+
+        bookService = new BookServiceImpl(bookDAO, authorDAO, genreDAO);
+    }
 
     private static List<Book> someBooks() {
         return List.of(mock(Book.class), mock(Book.class));

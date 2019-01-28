@@ -1,14 +1,14 @@
 package ru.otus.springframework.library.dao.jdbc;
 
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.ContextConfiguration;
 import ru.otus.springframework.library.dao.BookDaoBaseTest;
 
-@SpringBootTest
+@DataJdbcTest
 @ActiveProfiles({"test", "test-jdbc"})
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@Transactional
+@ContextConfiguration(classes = JdbcDAOConfig.class)
+@Import(BookDAOJdbc.class)
 class BookDAOJdbcTest extends BookDaoBaseTest {
 }
