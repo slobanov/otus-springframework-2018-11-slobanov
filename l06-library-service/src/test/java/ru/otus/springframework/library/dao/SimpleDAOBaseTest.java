@@ -123,8 +123,9 @@ public abstract class SimpleDAOBaseTest {
     void saveComment() {
         var commentText = "new comment";
         var bookId = 1L;
+        var book = bookDAO.findById(bookId).orElseThrow();
         var commentsBefore = commentDAO.fetchAll();
-        var resultComment = commentDAO.save(new Comment(bookId, commentText));
+        var resultComment = commentDAO.save(new Comment(book, commentText));
         var commentsAfter = commentDAO.fetchAll();
 
         assertThat(resultComment.getText(), equalTo(commentText));

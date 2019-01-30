@@ -11,7 +11,10 @@ import ru.otus.springframework.library.books.Book;
 import ru.otus.springframework.library.dao.BookDAO;
 import ru.otus.springframework.library.dao.SimpleDAO;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -39,9 +42,8 @@ class CommentServiceImplTest {
     @MethodSource("commentProvider")
     void commentsFor(List<Comment> expectedComments) {
         var isbn = "isbn";
-        var book = mock(Book.class);
-        when(book.getComments()).thenReturn(new HashSet<>(expectedComments));
-        when(bookDAO.findByIsbn(isbn)).thenReturn(Optional.of(book));
+        when(commentDAO.findByField(eq("BOOK_ID"), anyString())).thenReturn(expectedComments);
+        when(bookDAO.findByIsbn(isbn)).thenReturn(Optional.of(mock(Book.class)));
 
         var resultComments = commentService.commentsFor(isbn);
         assertThat(resultComments, contains(expectedComments.toArray()));
@@ -54,10 +56,11 @@ class CommentServiceImplTest {
 
     private static Stream<Arguments> commentProvider() {
         return StreamEx.of(
-                Arguments.of(List.of(new Comment(1L, 1L, "1", new Date()))),
+                Arguments.of(List.of(new Comment(1L, mock(Book.class), "1", new Date()))),
                 Arguments.of(List.of(
-                        new Comment(2L, 2L, "2", new Date(101L)),
-                        new Comment(1L, 1L, "1", new Date(102L)))
+                        new Comment(2L, mock(Book.class),"2", new Date(101L)),
+                        new Comment(1L, mock(Book.class), "1", new Date(102L))
+                        )
                 )
         );
     }
@@ -65,18 +68,16 @@ class CommentServiceImplTest {
     @Test
     void newComment() {
         var isbn = "isbn";
-        var book = mock(Book.class);
         var text = "text";
-        when(bookDAO.findByIsbn(isbn)).thenReturn(Optional.of(book));
-        when(bookDAO.findById(anyLong())).thenReturn(Optional.of(book));
+        when(bookDAO.findByIsbn(isbn)).thenReturn(Optional.of(mock(Book.class)));
+        when(commentDAO.save(any(Comment.class))).thenReturn(mock(Comment.class));
+
+        commentService.newComment(isbn, text);
 
         var commentCaptor = ArgumentCaptor.forClass(Comment.class);
-        var resultBook = commentService.newComment(isbn, text);
-
         verify(commentDAO).save(commentCaptor.capture());
         var comment = commentCaptor.getValue();
 
-        assertThat(resultBook, equalTo(book));
         assertThat(comment.getText(), equalTo(text));
     }
 
@@ -91,20 +92,4 @@ class CommentServiceImplTest {
         );
     }
 
-    @Test
-    void newCommentFailedToFIndAfterSave() {
-        var isbn = "isbn";
-        var book = mock(Book.class);
-        var text = "text";
-        when(bookDAO.findByIsbn(isbn)).thenReturn(Optional.of(book));
-        when(bookDAO.findById(anyLong())).thenReturn(Optional.empty());
-
-        var commentCaptor = ArgumentCaptor.forClass(Comment.class);
-        assertThrows(IllegalStateException.class, () -> commentService.newComment(isbn, text));
-
-        verify(commentDAO).save(commentCaptor.capture());
-        var comment = commentCaptor.getValue();
-
-        assertThat(comment.getText(), equalTo(text));
-    }
 }

@@ -28,8 +28,7 @@ class BookDAOJpa implements BookDAO {
        "         SELECT distinct b " +
        "           FROM Book b " +
        "     JOIN FETCH b.authors " +
-       "     JOIN FETCH b.genres " +
-       "LEFT JOIN FETCH b.comments";
+       "     JOIN FETCH b.genres ";
 
     @Override
     public List<Book> fetchAll() {

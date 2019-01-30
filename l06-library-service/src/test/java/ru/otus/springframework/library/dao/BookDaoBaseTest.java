@@ -10,7 +10,6 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.springframework.library.authors.Author;
 import ru.otus.springframework.library.books.Book;
-import ru.otus.springframework.library.comments.Comment;
 import ru.otus.springframework.library.genres.Genre;
 
 import java.util.Collection;
@@ -63,11 +62,8 @@ public abstract class BookDaoBaseTest {
                                         new Author(2L, "fName2", "lName1"),
                                         new Author(3L, "fName3", "lName3")
                                 ),
-                                Set.of(new Genre(3L, "genre3")),
-                                Set.of(
-                                        new Comment(3L, 2L, "comment3", null),
-                                        new Comment(4L, 2L, "comment4", null)
-                                )),
+                                Set.of(new Genre(3L, "genre3"))
+                        ),
                         new Book(3L, "3", "book3",
                                 Set.of(
                                         new Author(1L, "fName1", "lName1"),
@@ -77,10 +73,8 @@ public abstract class BookDaoBaseTest {
                                 Set.of(
                                         new Genre(2L, "genre2"),
                                         new Genre(3L, "genre3")
-                                ),
-                                Set.of(
-                                        new Comment(5L, 3L, "comment5", null)
                                 )
+
                         )
                 ))
         );
@@ -106,10 +100,6 @@ public abstract class BookDaoBaseTest {
                                         Set.of(
                                                 new Genre(1L, "genre1"),
                                                 new Genre(2L, "genre2")
-                                        ),
-                                        Set.of(
-                                                new Comment(1L, 1L, "comment1", null),
-                                                new Comment(2L, 1L, "comment2", null)
                                         )
                                 ),
                                 new Book(3L, "3", "book3",
@@ -121,9 +111,6 @@ public abstract class BookDaoBaseTest {
                                         Set.of(
                                                 new Genre(2L, "genre2"),
                                                 new Genre(3L, "genre3")
-                                        ),
-                                        Set.of(
-                                                new Comment(5L, 3L, "comment5", null)
                                         )
                                 )
                 ))
@@ -148,10 +135,6 @@ public abstract class BookDaoBaseTest {
                         Set.of(
                                 new Genre(1L, "genre1"),
                                 new Genre(2L, "genre2")
-                        ),
-                        Set.of(
-                                new Comment(1L, 1L, "comment1", null),
-                                new Comment(2L, 1L, "comment2", null)
                         )
                 )),
                 of(42L, Optional.empty())
@@ -175,22 +158,17 @@ public abstract class BookDaoBaseTest {
                         Set.of(
                                 new Genre(1L, "genre1"),
                                 new Genre(2L, "genre2")
-                        ),
-                        Set.of(
-                                new Comment(1L, 1L, "comment1", null),
-                                new Comment(2L, 1L, "comment2", null)
-                        ))
+                        )
                 )),
                 of("42", Optional.empty())
-        );
+        ));
     }
 
 
     private static Book newBook() {
         return new Book("isbn", "title",
                 Set.of(new Author(1L, "fName1", "lName1")),
-                Set.of(new Genre(1L, "genre1")),
-                Set.of()
+                Set.of(new Genre(1L, "genre1"))
         );
     }
 

@@ -136,7 +136,7 @@ class LibraryShell {
             @ShellOption({"-i", "--isbn"}) String isbn,
             @ShellOption({"-t", "--text"}) String text
     ) {
-        return presenterService.present(commentService.newComment(isbn, text), Book.class);
+        return presenterService.present(commentService.newComment(isbn, text), Comment.class);
     }
 
     @ShellMethod("All comments of book")

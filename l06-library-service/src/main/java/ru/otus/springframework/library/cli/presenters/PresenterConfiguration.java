@@ -20,8 +20,7 @@ class PresenterConfiguration {
                         "isbn", "isbn",
                         "title", "title",
                         "authorString", "authors",
-                        "genreString", "genres",
-                        "commentString", "comments"
+                        "genreString", "genres"
                 )
         );
     }

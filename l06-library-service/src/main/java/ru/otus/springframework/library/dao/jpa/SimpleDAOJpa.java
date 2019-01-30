@@ -18,15 +18,25 @@ class SimpleDAOJpa<T> implements SimpleDAO<T> {
 
     private final Class<T> persistentClass;
     private final String selectQuery;
-    private final Function<String, String> nameTranslator;
+    private final UnaryOperator<String> nameTranslator;
+    private final Function<String, Function<String, Object>> valueTranslator;
 
     @PersistenceContext
     private EntityManager em;
 
-    SimpleDAOJpa(Class<T> persistentClass, UnaryOperator<String> nameTranslator) {
+    SimpleDAOJpa(
+            Class<T> persistentClass,
+            UnaryOperator<String> nameTranslator,
+            Function<String, Function<String, Object>> valueTranslator
+    ) {
         this.persistentClass = persistentClass;
-        this.nameTranslator = nameTranslator;
         this.selectQuery = format("SELECT o FROM %s o", persistentClass.getSimpleName());
+        this.nameTranslator = nameTranslator;
+        this.valueTranslator = valueTranslator;
+    }
+
+    SimpleDAOJpa(Class<T> persistentClass, UnaryOperator<String> nameTranslator) {
+        this(persistentClass, nameTranslator, s -> (o -> o));
     }
 
     @Override
@@ -51,7 +61,7 @@ class SimpleDAOJpa<T> implements SimpleDAO<T> {
         var query = em.createQuery(
                 selectQuery + format(" WHERE o.%s = :%s", translatedName, fieldName),
                 persistentClass
-        ).setParameter(fieldName, fieldValue);
+        ).setParameter(fieldName, valueTranslator.apply(fieldName).apply(fieldValue));
         return query.getResultList();
     }
 

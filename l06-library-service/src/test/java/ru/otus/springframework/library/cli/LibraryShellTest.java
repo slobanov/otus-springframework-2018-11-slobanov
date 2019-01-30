@@ -197,13 +197,13 @@ class LibraryShellTest {
 
     @Test
     void addCommentToBook() {
-        var book = mock(Book.class);
         var isbn = "isbn";
         var text = "text";
+        var comment = mock(Comment.class);
 
-        when(commentService.newComment(isbn, text)).thenReturn(book);
+        when(commentService.newComment(isbn, text)).thenReturn(comment);
         shell.evaluate(() -> format("add-comment -i %s -t %s", isbn, text));
         verify(commentService).newComment(isbn, text);
-        verify(presenterService).present(book, Book.class);
+        verify(presenterService).present(comment, Comment.class);
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import ru.otus.springframework.library.authors.Author;
 import ru.otus.springframework.library.comments.Comment;
+import ru.otus.springframework.library.dao.BookDAO;
 import ru.otus.springframework.library.dao.SimpleDAO;
 import ru.otus.springframework.library.genres.Genre;
 
@@ -48,12 +49,13 @@ class JdbcDAOConfig {
 
 
     @Bean
-    SimpleDAO<Comment> commentDAO(NamedParameterJdbcOperations jdbcOperations) {
+    SimpleDAO<Comment> commentDAO(NamedParameterJdbcOperations jdbcOperations, BookDAO bookDAO) {
         return new SimpleDAOJdbc<>(
                 "COMMENT",
                 (r, i) -> new Comment(
                         r.getLong("ID"),
-                        r.getLong("BOOK_ID"),
+                        bookDAO.findById(r.getLong("BOOK_ID"))
+                            .orElseThrow(() -> new IllegalStateException("Failed to retrieve book")),
                         r.getString("TEXT"),
                         r.getTimestamp("CREATED")
                 ),

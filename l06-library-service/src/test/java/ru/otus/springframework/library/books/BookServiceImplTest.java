@@ -122,8 +122,7 @@ class BookServiceImplTest {
                 isbn,
                 title,
                 of(authorMap.values()).toSet(),
-                of(genreMap.values()).toSet(),
-                Set.of()
+                of(genreMap.values()).toSet()
         );
 
         when(bookService.withIsbn(isbn)).thenReturn(Optional.empty());
@@ -203,8 +202,7 @@ class BookServiceImplTest {
                 isbn,
                 title,
                 of(authorMap.values()).toSet(),
-                of(genreMap.values()).toSet(),
-                Set.of()
+                of(genreMap.values()).toSet()
         );
 
         when(bookService.withIsbn(isbn)).thenReturn(Optional.empty());
@@ -245,7 +243,7 @@ class BookServiceImplTest {
     void addAuthor() {
         var bookId = 1L;
         var bookIsbn = "isbn";
-        var book = new Book(bookId, bookIsbn, "title", Set.of(), Set.of(), Set.of());
+        var book = new Book(bookId, bookIsbn, "title", Set.of(), Set.of());
         var authorId = 2L;
         var author = new Author(authorId, "fName", "lName");
 
@@ -264,7 +262,7 @@ class BookServiceImplTest {
     void addAuthorNoAuthor() {
         var bookId = 1L;
         var bookIsbn = "isbn";
-        var book = new Book(bookId, bookIsbn, "title", Set.of(), Set.of(), Set.of());
+        var book = new Book(bookId, bookIsbn, "title", Set.of(), Set.of());
         var authorId = 2L;
 
         when(bookDAO.findByIsbn(bookIsbn)).thenReturn(Optional.of(book));
@@ -281,7 +279,7 @@ class BookServiceImplTest {
         var bookIsbn = "isbn";
         var authorId = 2L;
         var author = new Author(authorId, "fName", "lName");
-        var book = new Book(bookId, bookIsbn, "title", Set.of(author), Set.of(), Set.of());
+        var book = new Book(bookId, bookIsbn, "title", Set.of(author), Set.of());
 
         when(bookDAO.findByIsbn(bookIsbn)).thenReturn(Optional.of(book));
         when(authorDAO.findById(authorId)).thenReturn(Optional.of(author));
@@ -309,7 +307,7 @@ class BookServiceImplTest {
     void addGenre() {
         var bookIsbn = "isbn";
         var bookId = 1L;
-        var book = new Book(bookId, bookIsbn, "title", Set.of(), Set.of(), Set.of());
+        var book = new Book(bookId, bookIsbn, "title", Set.of(), Set.of());
         var genre = "genre";
         var genreObj = new Genre(2L, genre);
 
@@ -331,7 +329,7 @@ class BookServiceImplTest {
         var bookId = 1L;
         var genre = "genre";
         var genreObj = new Genre(2L, genre);
-        var book = new Book(bookId, bookIsbn, "title", Set.of(), Set.of(genreObj), Set.of());
+        var book = new Book(bookId, bookIsbn, "title", Set.of(), Set.of(genreObj));
 
         when(bookDAO.findByIsbn(bookIsbn)).thenReturn(Optional.of(book));
         when(genreDAO.findByField("NAME", genre)).thenReturn(List.of(genreObj));

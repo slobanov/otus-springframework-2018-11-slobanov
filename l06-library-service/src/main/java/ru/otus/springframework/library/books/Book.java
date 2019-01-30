@@ -2,7 +2,6 @@ package ru.otus.springframework.library.books;
 
 import lombok.*;
 import ru.otus.springframework.library.authors.Author;
-import ru.otus.springframework.library.comments.Comment;
 import ru.otus.springframework.library.genres.Genre;
 
 import javax.persistence.*;
@@ -38,9 +37,6 @@ public class Book {
     )
     private @NonNull Set<Genre> genres;
 
-    @OneToMany(mappedBy = "bookId", fetch = FetchType.EAGER)
-    private @NonNull Set<Comment> comments;
-
     public String getAuthorString() {
         return of(authors)
                 .sortedBy(Author::getId)
@@ -54,10 +50,4 @@ public class Book {
                 .map(Genre::getName).joining(", ");
     }
 
-    public String getCommentString() {
-        return of(comments)
-                .sortedBy(Comment::getCreated)
-                .map(Comment::getText)
-                .joining(System.lineSeparator() + "----" + System.lineSeparator());
-    }
 }

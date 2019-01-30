@@ -12,7 +12,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.springframework.library.authors.Author;
 import ru.otus.springframework.library.books.Book;
-import ru.otus.springframework.library.comments.Comment;
 import ru.otus.springframework.library.dao.BookDAO;
 import ru.otus.springframework.library.genres.Genre;
 
@@ -38,10 +37,7 @@ class BookDAOJdbc implements BookDAO {
                "       AUTHOR.FIRST_NAME," +
                "       AUTHOR.LAST_NAME," +
                "       GENRE.ID as GENRE_ID," +
-               "       GENRE.NAME," +
-               "       COMMENT.ID as COMMENT_ID," +
-               "       COMMENT.TEXT," +
-               "       COMMENT.CREATED" +
+               "       GENRE.NAME" +
                "       FROM BOOK " +
                "       JOIN BOOK_TO_AUTHOR " +
                "         ON BOOK.ID = BOOK_TO_AUTHOR.BOOK_ID " +
@@ -50,9 +46,7 @@ class BookDAOJdbc implements BookDAO {
                "       JOIN BOOK_TO_GENRE " +
                "         ON BOOK.ID = BOOK_TO_GENRE.BOOK_ID " +
                "       JOIN GENRE " +
-               "         ON GENRE.ID = BOOK_TO_GENRE.GENRE_ID " +
-               "  LEFT JOIN COMMENT" +
-               "         ON BOOK.ID = COMMENT.BOOK_ID ";
+               "         ON GENRE.ID = BOOK_TO_GENRE.GENRE_ID";
 
     private static final ResultSetExtractor<List<Book>> BOOK_EXTRACTOR = rs -> {
 
@@ -60,15 +54,11 @@ class BookDAOJdbc implements BookDAO {
         var titleMap = new HashMap<Long, String>();
         var bookAuthorIds = new HashMap<Long, Set<Long>>();
         var bookGenreIds = new HashMap<Long, Set<Long>>();
-        var bookCommentIds = new HashMap<Long, Set<Long>>();
 
         var firstNameMap = new HashMap<Long, String>();
         var lastNameMap = new HashMap<Long, String>();
 
         var genres = new HashMap<Long, String>();
-
-        var comments = new HashMap<Long, String>();
-        var commentsDt = new HashMap<Long, Date>();
 
         while (rs.next()) {
             var bookId = rs.getLong("BOOK_ID");
@@ -76,7 +66,6 @@ class BookDAOJdbc implements BookDAO {
             titleMap.putIfAbsent(bookId, rs.getString("TITLE"));
             bookAuthorIds.putIfAbsent(bookId, new HashSet<>());
             bookGenreIds.putIfAbsent(bookId, new HashSet<>());
-            bookCommentIds.putIfAbsent(bookId, new HashSet<>());
 
             var authorId = rs.getLong("AUTHOR_ID");
             bookAuthorIds.get(bookId).add(authorId);
@@ -86,14 +75,6 @@ class BookDAOJdbc implements BookDAO {
             var genreId = rs.getLong("GENRE_ID");
             bookGenreIds.get(bookId).add(genreId);
             genres.putIfAbsent(genreId, rs.getString("NAME"));
-
-            var commentId = rs.getLong("COMMENT_ID");
-            var commentText = rs.getString("TEXT");
-            if (commentText != null) {
-                bookCommentIds.get(bookId).add(commentId);
-                comments.putIfAbsent(commentId, commentText);
-                commentsDt.putIfAbsent(commentId, rs.getTimestamp("CREATED"));
-            }
         }
 
         return StreamEx.of(isbnMap.keySet())
@@ -106,17 +87,12 @@ class BookDAOJdbc implements BookDAO {
                             .map(gId -> new Genre(gId, genres.get(gId)))
                             .toSet();
 
-                    var commentObjs = StreamEx.of(bookCommentIds.get(bookId))
-                            .map(cId -> new Comment(cId, bookId, comments.get(cId), commentsDt.get(cId)))
-                            .toSet();
-
                     return new Book(
                             bookId,
                             isbnMap.get(bookId),
                             titleMap.get(bookId),
                             authors,
-                            genreObjs,
-                            commentObjs
+                            genreObjs
                     );
                 }).toList();
     };

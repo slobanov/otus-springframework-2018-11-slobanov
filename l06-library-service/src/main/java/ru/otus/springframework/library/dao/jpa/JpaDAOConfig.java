@@ -9,6 +9,7 @@ import ru.otus.springframework.library.dao.SimpleDAO;
 import ru.otus.springframework.library.genres.Genre;
 
 import java.util.Map;
+import java.util.function.Function;
 
 @Configuration
 @ConditionalOnProperty(name = "library.dao.provider", havingValue = "jpa")
@@ -37,7 +38,12 @@ class JpaDAOConfig {
     SimpleDAO<Comment> commentDAO() {
         return new SimpleDAOJpa<>(
                 Comment.class,
-                s -> Map.of("TEXT", "text").getOrDefault(s, s)
+                s -> Map.of(
+                        "BOOK_ID", "book.id"
+                ).getOrDefault(s, s),
+                s -> Map.<String, Function<String, Object>>of(
+                        "BOOK_ID", Long::parseLong
+                ).getOrDefault(s, o -> o)
         );
     }
 

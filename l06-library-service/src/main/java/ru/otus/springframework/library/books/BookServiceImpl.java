@@ -69,8 +69,7 @@ class BookServiceImpl implements BookService {
                 isbn,
                 title,
                 authors,
-                genreObjs,
-                Set.of()
+                genreObjs
         ));
     }
 
