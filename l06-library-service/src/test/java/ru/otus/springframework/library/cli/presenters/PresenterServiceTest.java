@@ -19,7 +19,7 @@ class PresenterServiceTest {
     private PresenterService presenterService;
 
     @BeforeEach
-    private void init() {
+    void init() {
         presenterService = spy(new PresenterServiceImpl(List.of(
                 new PresenterImpl<>(String.class, () -> EntryStream.of(Map.of("a", "b")))
         )));

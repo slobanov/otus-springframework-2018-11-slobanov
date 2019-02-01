@@ -2,7 +2,6 @@ package ru.otus.springframework.library.genres;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import ru.otus.springframework.library.dao.SimpleDAO;
 
@@ -38,8 +37,8 @@ class GenreServiceImpl implements GenreService {
         log.debug("found genre: {}", genre);
         try {
             return genre.flatMap((g -> genreDAO.deleteById(g.getId())));
-        } catch (DataIntegrityViolationException dive) {
-            throw new IllegalArgumentException("Can't delete genre [" + name + "]", dive);
+        } catch (RuntimeException e) {
+            throw new IllegalArgumentException("Can't delete genre [" + name + "]", e);
         }
     }
 

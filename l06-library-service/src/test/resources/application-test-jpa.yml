@@ -1,0 +1,2 @@
+library.dao.provider: "jpa"
+

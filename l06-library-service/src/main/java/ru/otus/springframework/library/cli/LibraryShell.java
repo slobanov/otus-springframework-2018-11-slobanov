@@ -10,6 +10,8 @@ import ru.otus.springframework.library.authors.AuthorService;
 import ru.otus.springframework.library.books.Book;
 import ru.otus.springframework.library.books.BookService;
 import ru.otus.springframework.library.cli.presenters.PresenterService;
+import ru.otus.springframework.library.comments.Comment;
+import ru.otus.springframework.library.comments.CommentService;
 import ru.otus.springframework.library.genres.Genre;
 import ru.otus.springframework.library.genres.GenreService;
 
@@ -24,6 +26,7 @@ class LibraryShell {
     private final BookService bookService;
     private final AuthorService authorService;
     private final GenreService genreService;
+    private final CommentService commentService;
 
     private final PresenterService presenterService;
 
@@ -127,5 +130,19 @@ class LibraryShell {
     ) {
         return presenterService.present(bookService.addAuthor(isbn, authorId), Book.class);
     }
+
+    @ShellMethod("Add comment to book")
+    Table addComment(
+            @ShellOption({"-i", "--isbn"}) String isbn,
+            @ShellOption({"-t", "--text"}) String text
+    ) {
+        return presenterService.present(commentService.newComment(isbn, text), Comment.class);
+    }
+
+    @ShellMethod("All comments of book")
+    Table allComments(@ShellOption({"-i", "--isbn"}) String isbn) {
+        return presenterService.present(commentService.commentsFor(isbn), Comment.class);
+    }
+
 
 }

@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.otus.springframework.library.authors.Author;
 import ru.otus.springframework.library.books.Book;
+import ru.otus.springframework.library.comments.Comment;
 import ru.otus.springframework.library.genres.Genre;
 
 import static one.util.streamex.EntryStream.of;
@@ -41,6 +42,17 @@ class PresenterConfiguration {
         return new PresenterImpl<>(
                 Genre.class,
                 () -> of("name", "name")
+        );
+    }
+
+    @Bean
+    Presenter<Comment> commentPresenter() {
+        return new PresenterImpl<>(
+                Comment.class,
+                () -> of(
+                        "prettyDate", "created",
+                        "text", "text"
+                )
         );
     }
 

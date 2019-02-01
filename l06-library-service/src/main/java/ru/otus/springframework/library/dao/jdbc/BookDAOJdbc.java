@@ -1,8 +1,9 @@
-package ru.otus.springframework.library.dao;
+package ru.otus.springframework.library.dao.jdbc;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import one.util.streamex.StreamEx;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.springframework.library.authors.Author;
 import ru.otus.springframework.library.books.Book;
+import ru.otus.springframework.library.dao.BookDAO;
 import ru.otus.springframework.library.genres.Genre;
 
 import java.util.*;
@@ -22,6 +24,7 @@ import static ru.otus.springframework.library.utils.OptionalUtils.asSingle;
 @Repository
 @Slf4j
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "library.dao.provider", havingValue = "jdbc")
 class BookDAOJdbc implements BookDAO {
 
     private final NamedParameterJdbcOperations jdbcOperations;
@@ -34,7 +37,7 @@ class BookDAOJdbc implements BookDAO {
                "       AUTHOR.FIRST_NAME," +
                "       AUTHOR.LAST_NAME," +
                "       GENRE.ID as GENRE_ID," +
-               "       GENRE.NAME " +
+               "       GENRE.NAME" +
                "       FROM BOOK " +
                "       JOIN BOOK_TO_AUTHOR " +
                "         ON BOOK.ID = BOOK_TO_AUTHOR.BOOK_ID " +
@@ -43,9 +46,9 @@ class BookDAOJdbc implements BookDAO {
                "       JOIN BOOK_TO_GENRE " +
                "         ON BOOK.ID = BOOK_TO_GENRE.BOOK_ID " +
                "       JOIN GENRE " +
-               "         ON GENRE.ID = BOOK_TO_GENRE.GENRE_ID ";
+               "         ON GENRE.ID = BOOK_TO_GENRE.GENRE_ID";
 
-    private static final ResultSetExtractor<List<Book>> BOOK_EXTRACTOR = (rs) -> {
+    private static final ResultSetExtractor<List<Book>> BOOK_EXTRACTOR = rs -> {
 
         var isbnMap = new HashMap<Long, String>();
         var titleMap = new HashMap<Long, String>();
@@ -72,19 +75,17 @@ class BookDAOJdbc implements BookDAO {
             var genreId = rs.getLong("GENRE_ID");
             bookGenreIds.get(bookId).add(genreId);
             genres.putIfAbsent(genreId, rs.getString("NAME"));
-
-            bookAuthorIds.get(bookId).add(authorId);
         }
 
         return StreamEx.of(isbnMap.keySet())
                 .map(bookId -> {
                     var authors = StreamEx.of(bookAuthorIds.get(bookId))
                             .map(aId -> new Author(aId, firstNameMap.get(aId), lastNameMap.get(aId)))
-                            .toList();
+                            .toSet();
 
                     var genreObjs = StreamEx.of(bookGenreIds.get(bookId))
                             .map(gId -> new Genre(gId, genres.get(gId)))
-                            .toList();
+                            .toSet();
 
                     return new Book(
                             bookId,
@@ -182,6 +183,7 @@ class BookDAOJdbc implements BookDAO {
     }
 
     @Override
+    @Transactional
     public Optional<Book> deleteById(Long id) {
         var book = findById(id);
         jdbcOperations.update(
@@ -192,6 +194,7 @@ class BookDAOJdbc implements BookDAO {
     }
 
     @Override
+    @Transactional
     public Book addAuthor(Book book, Author author) {
         var id = book.getId();
         jdbcOperations.update(
@@ -205,6 +208,7 @@ class BookDAOJdbc implements BookDAO {
     }
 
     @Override
+    @Transactional
     public Book addGenre(Book book, Genre genre) {
         var id = book.getId();
         jdbcOperations.update(

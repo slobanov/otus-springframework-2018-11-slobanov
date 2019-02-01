@@ -12,13 +12,15 @@ import ru.otus.springframework.library.authors.AuthorService;
 import ru.otus.springframework.library.books.Book;
 import ru.otus.springframework.library.books.BookService;
 import ru.otus.springframework.library.cli.presenters.PresenterService;
+import ru.otus.springframework.library.comments.Comment;
+import ru.otus.springframework.library.comments.CommentService;
 import ru.otus.springframework.library.genres.Genre;
 import ru.otus.springframework.library.genres.GenreService;
 
 import java.util.List;
 import java.util.Optional;
 
-import static java.lang.String.*;
+import static java.lang.String.format;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -37,6 +39,9 @@ class LibraryShellTest {
 
     @MockBean
     private GenreService genreService;
+
+    @MockBean
+    private CommentService commentService;
 
     @MockBean
     private PresenterService presenterService;
@@ -178,5 +183,27 @@ class LibraryShellTest {
         shell.evaluate(() -> format("add-author-to-book -i %s -a %s", isbn, aId));
         verify(bookService).addAuthor(isbn, aId);
         verify(presenterService).present(book, Book.class);
+    }
+
+    @Test
+    void allComments() {
+        var isbn = "isbn";
+        var comments = List.of(mock(Comment.class));
+        when(commentService.commentsFor(isbn)).thenReturn(comments);
+        shell.evaluate(() -> "all-comments -i " + isbn);
+        verify(commentService).commentsFor(isbn);
+        verify(presenterService).present(comments, Comment.class);
+    }
+
+    @Test
+    void addCommentToBook() {
+        var isbn = "isbn";
+        var text = "text";
+        var comment = mock(Comment.class);
+
+        when(commentService.newComment(isbn, text)).thenReturn(comment);
+        shell.evaluate(() -> format("add-comment -i %s -t %s", isbn, text));
+        verify(commentService).newComment(isbn, text);
+        verify(presenterService).present(comment, Comment.class);
     }
 }

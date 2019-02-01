@@ -1,13 +1,10 @@
 package ru.otus.springframework.library.genres;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.test.context.ActiveProfiles;
 import ru.otus.springframework.library.dao.SimpleDAO;
 
 import java.util.List;
@@ -16,19 +13,19 @@ import java.util.Optional;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-@SpringBootTest
-@ActiveProfiles("test")
 class GenreServiceImplTest {
 
-    @MockBean
     private SimpleDAO<Genre> genreDAO;
 
-    @Autowired
     private GenreService genreService;
+
+    @BeforeEach
+    void init() {
+        genreDAO = (SimpleDAO<Genre>) mock(SimpleDAO.class);
+        genreService = new GenreServiceImpl(genreDAO);
+    }
 
     @Test
     void all() {
@@ -50,9 +47,9 @@ class GenreServiceImplTest {
     @Test
     void newGenreDuplicate() {
         var genre = "genre";
-        when(genreDAO.findByField("NAME", genre)).thenThrow(DataIntegrityViolationException.class);
+        when(genreDAO.findByField("NAME", genre)).thenReturn(List.of(mock(Genre.class)));
 
-        assertThrows(DataIntegrityViolationException.class, () -> genreService.newGenre(genre));
+        assertThrows(IllegalArgumentException.class, () -> genreService.newGenre(genre));
         verify(genreDAO).findByField("NAME", genre);
     }
 

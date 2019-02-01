@@ -4,25 +4,50 @@ import lombok.*;
 import ru.otus.springframework.library.authors.Author;
 import ru.otus.springframework.library.genres.Genre;
 
-import java.util.List;
+import javax.persistence.*;
+import java.util.Set;
 
 import static one.util.streamex.StreamEx.of;
 
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
+@NoArgsConstructor
+@Entity
 public class Book {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private final @NonNull String isbn;
-    private final @NonNull String title;
-    private final @NonNull List<Author> authors;
-    private final @NonNull List<Genre> genres;
+    private @NonNull String isbn;
+    private @NonNull String title;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "BOOK_TO_AUTHOR",
+            joinColumns = @JoinColumn(name = "BOOK_ID"),
+            inverseJoinColumns = @JoinColumn(name = "AUTHOR_ID")
+    )
+    private @NonNull Set<Author> authors;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "BOOK_TO_GENRE",
+            joinColumns = @JoinColumn(name = "BOOK_ID"),
+            inverseJoinColumns = @JoinColumn(name = "GENRE_ID")
+    )
+    private @NonNull Set<Genre> genres;
 
     public String getAuthorString() {
-        return of(authors).map(Author::displayName).joining(", ");
+        return of(authors)
+                .sortedBy(Author::getId)
+                .map(Author::displayName)
+                .joining(", ");
     }
 
     public String getGenreString() {
-        return of(genres).map(Genre::getName).joining(", ");
+        return of(genres)
+                .sortedBy(Genre::getId)
+                .map(Genre::getName).joining(", ");
     }
+
 }

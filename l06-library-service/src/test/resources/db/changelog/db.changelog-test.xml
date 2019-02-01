@@ -10,5 +10,8 @@
         <loadData tableName="GENRE" file="db/changelog/data/test_genre.csv"/>
         <loadData tableName="BOOK_TO_AUTHOR" file="db/changelog/data/test_book_to_author.csv"/>
         <loadData tableName="BOOK_TO_GENRE" file="db/changelog/data/test_book_to_genre.csv"/>
+
+        <dropDefaultValue columnName="CREATED" tableName="COMMENT"/>
+        <loadData tableName="COMMENT" file="db/changelog/data/test-comment.csv"/>
     </changeSet>
 </databaseChangeLog>

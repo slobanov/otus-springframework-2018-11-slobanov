@@ -1,4 +1,4 @@
-package ru.otus.springframework.library.dao;
+package ru.otus.springframework.library.dao.jdbc;
 
 import lombok.extern.slf4j.Slf4j;
 import one.util.streamex.EntryStream;
@@ -6,6 +6,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.transaction.annotation.Transactional;
+import ru.otus.springframework.library.dao.SimpleDAO;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +21,7 @@ import static java.util.Objects.requireNonNull;
 import static ru.otus.springframework.library.utils.OptionalUtils.asSingle;
 
 @Slf4j
-class SimpleDAOImpl<T> implements SimpleDAO<T> {
+class SimpleDAOJdbc<T> implements SimpleDAO<T> {
 
     private final String tableName;
     private final RowMapper<T> rowMapper;
@@ -29,10 +31,11 @@ class SimpleDAOImpl<T> implements SimpleDAO<T> {
 
     private final String insertQueryTemplate;
 
-    SimpleDAOImpl(
+    SimpleDAOJdbc(
             String tableName,
             RowMapper<T> rowMapper,
-            Map<String, String> sqlParams, NamedParameterJdbcOperations jdbcOperations
+            Map<String, String> sqlParams,
+            NamedParameterJdbcOperations jdbcOperations
     ) {
         this.tableName = tableName;
         this.rowMapper = rowMapper;
@@ -86,6 +89,7 @@ class SimpleDAOImpl<T> implements SimpleDAO<T> {
     }
 
     @Override
+    @Transactional
     public T save(T obj) {
         log.debug("save[{}]: {}", tableName, obj);
 
@@ -108,6 +112,7 @@ class SimpleDAOImpl<T> implements SimpleDAO<T> {
     }
 
     @Override
+    @Transactional
     public Optional<T> deleteById(Long id) {
         log.debug("delete by id[{}]: {}", tableName, id);
         var toDelete = findById(id);

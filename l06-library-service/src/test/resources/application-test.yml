@@ -1,6 +1,8 @@
 spring:
   shell.interactive.enabled: false
+  main.banner-mode: "off"
 
-  datasource:
-    url: "jdbc:h2:mem:testdb"
-
+logging.level:
+  root: "WARN"
+  ru.otus: "DEBUG"
+  org.hibernate.SQL: "DEBUG"
