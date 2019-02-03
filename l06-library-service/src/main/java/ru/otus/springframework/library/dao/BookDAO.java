@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BookDAO {
-    List<Book> fetchAll();
+    List<Book> findAll();
     List<Book> findByAuthor(Author author);
     List<Book> findByGenre(Genre genre);
 
@@ -16,7 +16,7 @@ public interface BookDAO {
     Optional<Book> findByIsbn(String isbn);
 
     Book save(Book book);
-    Optional<Book> deleteById(Long id);
+    Optional<Book> deleteByObjId(Long id);
 
     Book addAuthor(Book book, Author author);
     Book addGenre(Book book, Genre genre);

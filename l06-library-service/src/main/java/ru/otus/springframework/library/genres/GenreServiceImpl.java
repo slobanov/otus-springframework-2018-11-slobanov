@@ -19,7 +19,7 @@ class GenreServiceImpl implements GenreService {
 
     @Override
     public List<Genre> all() {
-        return genreDAO.fetchAll();
+        return genreDAO.findAll();
     }
 
     @Override
@@ -28,7 +28,7 @@ class GenreServiceImpl implements GenreService {
         if (findByName(name).isPresent()) {
             throw new IllegalArgumentException("Genre " + name + " already exists!");
         }
-        return genreDAO.save(new Genre(name));
+        return genreDAO.saveObj(new Genre(name));
     }
 
     @Override
@@ -36,7 +36,7 @@ class GenreServiceImpl implements GenreService {
         var genre = findByName(name);
         log.debug("found genre: {}", genre);
         try {
-            return genre.flatMap((g -> genreDAO.deleteById(g.getId())));
+            return genre.flatMap((g -> genreDAO.deleteByObjId(g.getId())));
         } catch (RuntimeException e) {
             throw new IllegalArgumentException("Can't delete genre [" + name + "]", e);
         }

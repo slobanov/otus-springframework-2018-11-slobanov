@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SimpleDAO<T> {
-    List<T> fetchAll();
+    List<T> findAll();
 
     Optional<T> findById(Long id);
     List<T> findByField(String fieldName, String fieldValue);
 
-    Optional<T> deleteById(Long id);
+    Optional<T> deleteByObjId(Long id);
 
-    T save(T obj);
+    T saveObj(T obj);
 }

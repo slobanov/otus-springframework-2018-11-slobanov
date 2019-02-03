@@ -36,7 +36,7 @@ class AuthorServiceImplTest {
     @Test
     void all() {
         authorService.all();
-        verify(authorDAO).fetchAll();
+        verify(authorDAO).findAll();
     }
 
     @ParameterizedTest
@@ -68,7 +68,7 @@ class AuthorServiceImplTest {
     void newAuthor(String fName, String lName) {
         var authorCaptor = ArgumentCaptor.forClass(Author.class);
         authorService.newAuthor(fName, lName);
-        verify(authorDAO).save(authorCaptor.capture());
+        verify(authorDAO).saveObj(authorCaptor.capture());
         var author = authorCaptor.getValue();
 
         assertThat(fName, equalTo(author.getFirstName()));
@@ -77,24 +77,24 @@ class AuthorServiceImplTest {
 
     @Test
     void newAuthorFailed() {
-        when(authorDAO.save(ArgumentMatchers.any(Author.class))).thenThrow(RuntimeException.class);
+        when(authorDAO.saveObj(ArgumentMatchers.any(Author.class))).thenThrow(RuntimeException.class);
         assertThrows(RuntimeException.class, () -> authorService.newAuthor("1", "2"));
     }
 
     @ParameterizedTest
     @MethodSource("authorProvider")
     void removeAuthor(Long id, Optional<Author> expectedAuthor) {
-        when(authorDAO.deleteById(id)).thenReturn(expectedAuthor);
+        when(authorDAO.deleteByObjId(id)).thenReturn(expectedAuthor);
 
         assertThat(authorService.removeAuthor(id), equalTo(expectedAuthor));
-        verify(authorDAO).deleteById(id);
+        verify(authorDAO).deleteByObjId(id);
     }
 
     @Test
     void removeAuthorFailed() {
-        when(authorDAO.deleteById(anyLong())).thenThrow(DataIntegrityViolationException.class);
+        when(authorDAO.deleteByObjId(anyLong())).thenThrow(DataIntegrityViolationException.class);
         var id = 1L;
         assertThrows(IllegalArgumentException.class, () -> authorService.removeAuthor(id));
-        verify(authorDAO).deleteById(id);
+        verify(authorDAO).deleteByObjId(id);
     }
 }

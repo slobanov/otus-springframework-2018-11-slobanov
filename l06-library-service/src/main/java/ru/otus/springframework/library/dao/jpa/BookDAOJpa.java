@@ -31,7 +31,7 @@ class BookDAOJpa implements BookDAO {
        "     JOIN FETCH b.genres ";
 
     @Override
-    public List<Book> fetchAll() {
+    public List<Book> findAll() {
         return em.createQuery(
                 BOOK_SELECT,
                 Book.class
@@ -76,7 +76,7 @@ class BookDAOJpa implements BookDAO {
 
     @Override
     @Transactional
-    public Optional<Book> deleteById(Long id) {
+    public Optional<Book> deleteByObjId(Long id) {
         var book = findById(id);
         book.ifPresent(em::remove);
         return book;

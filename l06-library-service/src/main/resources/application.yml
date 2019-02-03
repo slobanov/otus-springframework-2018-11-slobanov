@@ -1,6 +1,6 @@
 library:
   prompt: "library:>"
-  dao.provider: "jpa"
+  dao.provider: "spring-jpa"
 
 spring:
   banner.location: "classpath:/banner.txt"

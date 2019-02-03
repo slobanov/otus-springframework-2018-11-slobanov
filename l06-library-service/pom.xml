@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>l06-library-service</artifactId>
-    <version>2.0.0</version>
+    <version>3.0.0</version>
 
     <dependencies>
         <dependency>
@@ -71,7 +71,7 @@
                                     <PG_URL>jdbc:postgresql://localhost:5432/postgres</PG_URL>
                                     <PG_USERNAME>postgres</PG_USERNAME>
                                     <PG_PASSWORD>postgres</PG_PASSWORD>
-                                    <DAO_PROVIDER>jpa</DAO_PROVIDER>
+                                    <DAO_PROVIDER>spring-jpa</DAO_PROVIDER>
                                 </env>
                             </build>
                         </image>

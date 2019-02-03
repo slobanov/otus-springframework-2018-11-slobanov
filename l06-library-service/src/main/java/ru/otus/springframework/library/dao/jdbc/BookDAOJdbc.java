@@ -99,7 +99,7 @@ class BookDAOJdbc implements BookDAO {
 
 
     @Override
-    public List<Book> fetchAll() {
+    public List<Book> findAll() {
         return jdbcOperations.query(JOINED_SQL_REQUEST, BOOK_EXTRACTOR);
     }
 
@@ -184,7 +184,7 @@ class BookDAOJdbc implements BookDAO {
 
     @Override
     @Transactional
-    public Optional<Book> deleteById(Long id) {
+    public Optional<Book> deleteByObjId(Long id) {
         var book = findById(id);
         jdbcOperations.update(
                 "DELETE FROM BOOK WHERE ID = :ID",
