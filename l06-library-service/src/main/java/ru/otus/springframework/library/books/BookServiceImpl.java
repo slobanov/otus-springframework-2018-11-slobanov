@@ -98,7 +98,7 @@ class BookServiceImpl implements BookService {
         if (!notFoundGenres.isEmpty()) {
             log.debug("some genres don't exist: {}, creating...", notFoundGenres);
             genresOfBook = genresOfBook.append(
-                    EntryStream.of(notFoundGenres).keys().map(g -> genreDAO.save(new Genre(g)))
+                    EntryStream.of(notFoundGenres).keys().map(g -> genreDAO.saveObj(new Genre(g)))
             );
         }
 
@@ -109,7 +109,7 @@ class BookServiceImpl implements BookService {
     @Override
     public Optional<Book> removeBook(String isbn) {
         var book = withIsbn(isbn);
-        return book.flatMap(bk -> bookDAO.deleteById(bk.getId()));
+        return book.flatMap(bk -> bookDAO.deleteByObjId(bk.getId()));
     }
 
     @Override
@@ -133,7 +133,7 @@ class BookServiceImpl implements BookService {
     public Book addGenre(String isbn, String genre) {
         var book = getBookByIsbn(isbn);
         var genreObj = asSingle(genreDAO.findByField("NAME", genre))
-                .orElseGet(() -> genreDAO.save(new Genre(genre)));
+                .orElseGet(() -> genreDAO.saveObj(new Genre(genre)));
 
         if (of(book.getGenres()).findAny(g -> g.equals(genreObj)).isPresent()) {
             throw new IllegalArgumentException(String.format(

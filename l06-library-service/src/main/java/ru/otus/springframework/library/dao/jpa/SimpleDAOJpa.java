@@ -67,7 +67,7 @@ class SimpleDAOJpa<T> implements SimpleDAO<T> {
 
     @Override
     @Transactional
-    public Optional<T> deleteById(Long id) {
+    public Optional<T> deleteByObjId(Long id) {
         log.debug("delete by id [{}]: {}", persistentClass, id);
         var obj = findById(id);
         log.debug("obj to delete [{}]: {}", persistentClass, obj);
@@ -77,7 +77,7 @@ class SimpleDAOJpa<T> implements SimpleDAO<T> {
 
     @Override
     @Transactional
-    public T save(T obj) {
+    public T saveObj(T obj) {
         log.debug("saving [{}]: {}", persistentClass, obj);
         em.persist(obj);
         log.debug("saved [{}]: {}", persistentClass, obj);

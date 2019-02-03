@@ -6,7 +6,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.springframework.library.authors.Author;
 import ru.otus.springframework.library.books.Book;
@@ -27,7 +26,7 @@ import static org.junit.jupiter.params.provider.Arguments.of;
 @Transactional
 public abstract class BookDaoBaseTest {
 
-    @SpyBean
+    @Autowired
     private BookDAO bookDAOJdbc;
 
     @Autowired
@@ -192,7 +191,7 @@ public abstract class BookDaoBaseTest {
     @MethodSource("bookIsbnProvider")
     void deleteById(Long id, Optional<Book> expectedBook) {
         var initialSize = bookDAOJdbc.fetchAll().size();
-        var book = bookDAOJdbc.deleteById(id);
+        var book = bookDAOJdbc.deleteByObjId(id);
 
         assertThat(book, equalTo(expectedBook));
         var diffSize = initialSize - bookDAOJdbc.fetchAll().size();
@@ -221,7 +220,7 @@ public abstract class BookDaoBaseTest {
     @Test
     void addGenre() {
         var bookId = 1L;
-        var genre = genreDAO.save(new Genre("new genre"));
+        var genre = genreDAO.saveObj(new Genre("new genre"));
 
         var bookBefore = bookDAOJdbc.findById(bookId);
         assertThat(bookBefore.isPresent(), equalTo(true));

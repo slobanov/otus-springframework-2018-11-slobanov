@@ -1,9 +1,10 @@
 # l06-library-service
 
-This is a simple library application. It manages information about authors, books and genres:
+This is a simple library application. It manages information about authors, books, genres and comments:
  * show all books, books written by author or books of particular genre.
  * modify books by adding authors and genres.
  * show all authors and books, add new ones; authors can be queried by id.
+ * show all and add comments for book.
  * delete books, authors and genres.
  
 All additional information about library usage can be seen after typing `help` in library menu.
@@ -32,11 +33,12 @@ $ docker run -it --rm --link=postgres_db \
     -e PG_URL=jdbc:postgresql://postgres_db:5432/postgres \
     otusspring201811slobanov/l06-library-service
 ```
-Also, it is possible to switch between DAO providers - app use JPA via Hibernate,
-to use plain old JDBC set parameter `library.dao.provider=jdbc`
-(for docker image there is corresponding ENV `DAO_PROVIDER` parameter).
+Also, it is possible to switch between DAO providers - app use spring-data-jpa repositories,
+* to use hand-written JPA via Hibernate set parameter `library.dao.provider=jpa`,
+* to use plain old JDBC set parameter `library.dao.provider=jdbc`
 
-<br>
+For docker image there is corresponding ENV `DAO_PROVIDER` parameter.
+
 - - - -
 
 Sergey Lobanov

@@ -37,10 +37,10 @@ class GenreServiceImplTest {
     @ValueSource(strings = {"qwe", "yy"})
     void newGenre(String genre) {
         var genreObj = new Genre(genre);
-        when(genreDAO.save(genreObj)).thenReturn(genreObj);
+        when(genreDAO.saveObj(genreObj)).thenReturn(genreObj);
 
         var resGenre = genreService.newGenre(genre);
-        verify(genreDAO).save(genreObj);
+        verify(genreDAO).saveObj(genreObj);
         assertThat(resGenre, equalTo(genreObj));
     }
 
@@ -58,7 +58,7 @@ class GenreServiceImplTest {
     void removeGenre(String genre) {
         var genreObj = new Genre(42L, genre);
         when(genreDAO.findByField("NAME", genre)).thenReturn(List.of(genreObj));
-        when(genreDAO.deleteById(anyLong())).thenReturn(Optional.of(genreObj));
+        when(genreDAO.deleteByObjId(anyLong())).thenReturn(Optional.of(genreObj));
 
         var resGenre = genreService.removeGenre(genre);
 
@@ -72,11 +72,11 @@ class GenreServiceImplTest {
         var id = 42L;
         var genreObj = new Genre(id, genre);
         when(genreDAO.findByField("NAME", genre)).thenReturn(List.of(genreObj));
-        when(genreDAO.deleteById(anyLong())).thenThrow(DataIntegrityViolationException.class);
+        when(genreDAO.deleteByObjId(anyLong())).thenThrow(DataIntegrityViolationException.class);
 
         assertThrows(IllegalArgumentException.class, () -> genreService.removeGenre(genre));
         verify(genreDAO).findByField("NAME", genre);
-        verify(genreDAO).deleteById(id);
+        verify(genreDAO).deleteByObjId(id);
 
     }
 

@@ -90,7 +90,7 @@ class SimpleDAOJdbc<T> implements SimpleDAO<T> {
 
     @Override
     @Transactional
-    public T save(T obj) {
+    public T saveObj(T obj) {
         log.debug("save[{}]: {}", tableName, obj);
 
         var keyHolder = new GeneratedKeyHolder();
@@ -113,7 +113,7 @@ class SimpleDAOJdbc<T> implements SimpleDAO<T> {
 
     @Override
     @Transactional
-    public Optional<T> deleteById(Long id) {
+    public Optional<T> deleteByObjId(Long id) {
         log.debug("delete by id[{}]: {}", tableName, id);
         var toDelete = findById(id);
         log.debug("obj to delete: {}", toDelete);

@@ -28,7 +28,7 @@ class AuthorServiceImpl implements AuthorService {
     @Override
     public Author newAuthor(String firstName, String lastName) {
         try {
-            return authorDAO.save(new Author(firstName, lastName));
+            return authorDAO.saveObj(new Author(firstName, lastName));
         } catch (RuntimeException e) {
             throw new IllegalArgumentException(
                     format("Can't save author [f = %s, l = %s]", firstName ,lastName),
@@ -40,7 +40,7 @@ class AuthorServiceImpl implements AuthorService {
     @Override
     public Optional<Author> removeAuthor(Long id) {
         try {
-            return authorDAO.deleteById(id);
+            return authorDAO.deleteByObjId(id);
         } catch (RuntimeException e) {
             throw new IllegalArgumentException("Can't delete author [" + id + "]", e);
         }

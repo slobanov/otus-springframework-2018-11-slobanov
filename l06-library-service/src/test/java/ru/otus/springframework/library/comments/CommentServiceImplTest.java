@@ -70,12 +70,12 @@ class CommentServiceImplTest {
         var isbn = "isbn";
         var text = "text";
         when(bookDAO.findByIsbn(isbn)).thenReturn(Optional.of(mock(Book.class)));
-        when(commentDAO.save(any(Comment.class))).thenReturn(mock(Comment.class));
+        when(commentDAO.saveObj(any(Comment.class))).thenReturn(mock(Comment.class));
 
         commentService.newComment(isbn, text);
 
         var commentCaptor = ArgumentCaptor.forClass(Comment.class);
-        verify(commentDAO).save(commentCaptor.capture());
+        verify(commentDAO).saveObj(commentCaptor.capture());
         var comment = commentCaptor.getValue();
 
         assertThat(comment.getText(), equalTo(text));

@@ -215,7 +215,7 @@ class BookServiceImplTest {
                 genres
         );
 
-        verify(genreDAO).save(new Genre("g2"));
+        verify(genreDAO).saveObj(new Genre("g2"));
         assertThat(resultBook, equalTo(book));
     }
 
@@ -224,7 +224,7 @@ class BookServiceImplTest {
         var book = mock(Book.class);
 
         when(bookDAO.findByIsbn("123")).thenReturn(Optional.of(book));
-        when(bookDAO.deleteById(anyLong())).thenReturn(Optional.of(book));
+        when(bookDAO.deleteByObjId(anyLong())).thenReturn(Optional.of(book));
 
         var result = bookService.removeBook("123");
         assertThat(result.isPresent(), equalTo(true));
@@ -320,7 +320,7 @@ class BookServiceImplTest {
         assertThat(newBook, equalTo(book));
         verify(bookDAO).findByIsbn(bookIsbn);
         verify(bookDAO).addGenre(book, genreObj);
-        verify(genreDAO, never()).save(genreObj);
+        verify(genreDAO, never()).saveObj(genreObj);
     }
 
     @Test
@@ -338,7 +338,7 @@ class BookServiceImplTest {
 
         verify(bookDAO).findByIsbn(bookIsbn);
         verify(bookDAO, never()).addGenre(book, genreObj);
-        verify(genreDAO, never()).save(genreObj);
+        verify(genreDAO, never()).saveObj(genreObj);
     }
 
     @Test

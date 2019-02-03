@@ -9,7 +9,7 @@ public interface SimpleDAO<T> {
     Optional<T> findById(Long id);
     List<T> findByField(String fieldName, String fieldValue);
 
-    Optional<T> deleteById(Long id);
+    Optional<T> deleteByObjId(Long id);
 
-    T save(T obj);
+    T saveObj(T obj);
 }

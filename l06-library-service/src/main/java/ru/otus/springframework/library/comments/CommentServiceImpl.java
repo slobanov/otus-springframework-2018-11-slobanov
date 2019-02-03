@@ -32,7 +32,7 @@ class CommentServiceImpl implements CommentService {
         log.debug("book with isbn [{}]: {}", isbn, book);
         return book.map(bk -> {
             var comment = new Comment(bk, text);
-            return commentDAO.save(comment);
+            return commentDAO.saveObj(comment);
         }).orElseThrow(
                 () -> new IllegalArgumentException("There is no book with isbn = " + isbn)
         );

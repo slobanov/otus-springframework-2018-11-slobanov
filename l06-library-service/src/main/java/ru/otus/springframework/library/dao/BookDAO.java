@@ -16,7 +16,7 @@ public interface BookDAO {
     Optional<Book> findByIsbn(String isbn);
 
     Book save(Book book);
-    Optional<Book> deleteById(Long id);
+    Optional<Book> deleteByObjId(Long id);
 
     Book addAuthor(Book book, Author author);
     Book addGenre(Book book, Genre genre);
