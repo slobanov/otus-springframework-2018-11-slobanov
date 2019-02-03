@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BookDAO {
-    List<Book> fetchAll();
+    List<Book> findAll();
     List<Book> findByAuthor(Author author);
     List<Book> findByGenre(Genre genre);
 

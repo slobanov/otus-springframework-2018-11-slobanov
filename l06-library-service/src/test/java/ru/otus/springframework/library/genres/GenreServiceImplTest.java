@@ -30,7 +30,7 @@ class GenreServiceImplTest {
     @Test
     void all() {
         genreService.all();
-        verify(genreDAO).fetchAll();
+        verify(genreDAO).findAll();
     }
 
     @ParameterizedTest

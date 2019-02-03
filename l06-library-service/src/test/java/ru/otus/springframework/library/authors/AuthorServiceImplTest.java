@@ -36,7 +36,7 @@ class AuthorServiceImplTest {
     @Test
     void all() {
         authorService.all();
-        verify(authorDAO).fetchAll();
+        verify(authorDAO).findAll();
     }
 
     @ParameterizedTest

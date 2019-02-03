@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SimpleDAO<T> {
-    List<T> fetchAll();
+    List<T> findAll();
 
     Optional<T> findById(Long id);
     List<T> findByField(String fieldName, String fieldValue);

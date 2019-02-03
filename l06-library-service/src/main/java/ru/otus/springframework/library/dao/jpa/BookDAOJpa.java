@@ -31,7 +31,7 @@ class BookDAOJpa implements BookDAO {
        "     JOIN FETCH b.genres ";
 
     @Override
-    public List<Book> fetchAll() {
+    public List<Book> findAll() {
         return em.createQuery(
                 BOOK_SELECT,
                 Book.class

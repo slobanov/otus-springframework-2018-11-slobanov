@@ -59,8 +59,8 @@ class SimpleDAOJdbc<T> implements SimpleDAO<T> {
     }
 
     @Override
-    public List<T> fetchAll() {
-        log.debug("fetchAll");
+    public List<T> findAll() {
+        log.debug("findAll");
         return jdbcOperations.query(
                 "SELECT * FROM " + tableName,
                 rowMapper

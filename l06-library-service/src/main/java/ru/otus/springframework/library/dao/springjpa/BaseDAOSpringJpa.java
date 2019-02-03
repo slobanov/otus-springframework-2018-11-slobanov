@@ -1,6 +1,5 @@
 package ru.otus.springframework.library.dao.springjpa;
 
-import one.util.streamex.StreamEx;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 import ru.otus.springframework.library.dao.SimpleDAO;
@@ -29,9 +28,7 @@ interface BaseDAOSpringJpa<T> extends CrudRepository<T, Long>, SimpleDAO<T> {
     }
 
     @Override
-    default List<T> fetchAll() {
-        return StreamEx.of(findAll().spliterator()).toList();
-    }
+    List<T> findAll();
 
     @Override
     default List<T> findByField(String fieldName, String fieldValue) {

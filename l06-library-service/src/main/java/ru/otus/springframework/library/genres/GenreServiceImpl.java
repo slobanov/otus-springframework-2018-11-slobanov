@@ -19,7 +19,7 @@ class GenreServiceImpl implements GenreService {
 
     @Override
     public List<Genre> all() {
-        return genreDAO.fetchAll();
+        return genreDAO.findAll();
     }
 
     @Override

@@ -40,7 +40,7 @@ class SimpleDAOJpa<T> implements SimpleDAO<T> {
     }
 
     @Override
-    public List<T> fetchAll() {
+    public List<T> findAll() {
         log.debug("fetch all [{}]", persistentClass);
         var query = em.createQuery(selectQuery, persistentClass);
         return query.getResultList();

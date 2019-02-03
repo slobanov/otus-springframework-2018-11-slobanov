@@ -99,7 +99,7 @@ class BookDAOJdbc implements BookDAO {
 
 
     @Override
-    public List<Book> fetchAll() {
+    public List<Book> findAll() {
         return jdbcOperations.query(JOINED_SQL_REQUEST, BOOK_EXTRACTOR);
     }
 

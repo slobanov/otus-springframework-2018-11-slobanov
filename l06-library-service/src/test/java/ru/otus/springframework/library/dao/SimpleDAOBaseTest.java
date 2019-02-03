@@ -39,7 +39,7 @@ public abstract class SimpleDAOBaseTest {
 
     @Test
     void fetchAll() {
-        var allAuthors = authorDAO.fetchAll();
+        var allAuthors = authorDAO.findAll();
         assertThat(allAuthors, hasSize(5));
         assertThat(
                 StreamEx.of(allAuthors).map(Author::getFirstName).toList(),
@@ -52,7 +52,7 @@ public abstract class SimpleDAOBaseTest {
     void findById(Long id, Optional<Author> expectedAuthor) {
         var author = authorDAO.findById(id);
         assertThat(author, equalTo(expectedAuthor));
-        author.ifPresent(a -> assertThat(authorDAO.fetchAll(), hasItem(a)));
+        author.ifPresent(a -> assertThat(authorDAO.findAll(), hasItem(a)));
     }
 
     private static Stream<Arguments> authorProvider() {
@@ -99,7 +99,7 @@ public abstract class SimpleDAOBaseTest {
         assertThat(author.getFirstName(), equalTo(firstName));
         assertThat(author.getLastName(), equalTo(lastName));
 
-        var allAuthors = authorDAO.fetchAll();
+        var allAuthors = authorDAO.findAll();
         assertThat(allAuthors, hasItem(author));
         assertThat(allAuthors, hasSize(6));
     }
@@ -110,7 +110,7 @@ public abstract class SimpleDAOBaseTest {
         if (expectedAuthor.isPresent() && bookDAO.findByAuthor(expectedAuthor.get()).isEmpty()) {
             var author = authorDAO.deleteByObjId(id);
             assertThat(author, equalTo(expectedAuthor));
-            author.ifPresent(a -> assertThat(authorDAO.fetchAll(), not(hasItem(a))));
+            author.ifPresent(a -> assertThat(authorDAO.findAll(), not(hasItem(a))));
         }
     }
 
@@ -124,9 +124,9 @@ public abstract class SimpleDAOBaseTest {
         var commentText = "new comment";
         var bookId = 1L;
         var book = bookDAO.findById(bookId).orElseThrow();
-        var commentsBefore = commentDAO.fetchAll();
+        var commentsBefore = commentDAO.findAll();
         var resultComment = commentDAO.saveObj(new Comment(book, commentText));
-        var commentsAfter = commentDAO.fetchAll();
+        var commentsAfter = commentDAO.findAll();
 
         assertThat(resultComment.getText(), equalTo(commentText));
         assertThat(commentsAfter.size() - commentsBefore.size(), equalTo(1));

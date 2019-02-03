@@ -43,7 +43,7 @@ class BookServiceImplTest {
     @Test
     void all() {
         var books = someBooks();
-        when(bookDAO.fetchAll()).thenReturn(books);
+        when(bookDAO.findAll()).thenReturn(books);
 
         assertThat(bookService.all(), equalTo(books));
     }

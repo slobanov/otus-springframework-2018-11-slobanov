@@ -37,7 +37,7 @@ public abstract class BookDaoBaseTest {
 
     @Test
     void fetchAll() {
-        var books = bookDAOJdbc.fetchAll();
+        var books = bookDAOJdbc.findAll();
         assertThat(books, hasSize(3));
         assertThat(StreamEx.of(books).map(Book::getIsbn).toList(),
                 containsInAnyOrder("1", "2", "3")
@@ -174,10 +174,10 @@ public abstract class BookDaoBaseTest {
     @Test
     void save() {
         var book = newBook();
-        var initialSize = bookDAOJdbc.fetchAll().size();
+        var initialSize = bookDAOJdbc.findAll().size();
         var savedBook = bookDAOJdbc.save(book);
 
-        var finalSize = bookDAOJdbc.fetchAll().size();
+        var finalSize = bookDAOJdbc.findAll().size();
         assertThat(finalSize - initialSize, equalTo(1));
 
         assertThat(savedBook.getTitle(), equalTo(book.getTitle()));
@@ -190,11 +190,11 @@ public abstract class BookDaoBaseTest {
     @ParameterizedTest
     @MethodSource("bookIsbnProvider")
     void deleteById(Long id, Optional<Book> expectedBook) {
-        var initialSize = bookDAOJdbc.fetchAll().size();
+        var initialSize = bookDAOJdbc.findAll().size();
         var book = bookDAOJdbc.deleteByObjId(id);
 
         assertThat(book, equalTo(expectedBook));
-        var diffSize = initialSize - bookDAOJdbc.fetchAll().size();
+        var diffSize = initialSize - bookDAOJdbc.findAll().size();
 
         if (expectedBook.isPresent()) {
             assertThat(diffSize, equalTo(1));
