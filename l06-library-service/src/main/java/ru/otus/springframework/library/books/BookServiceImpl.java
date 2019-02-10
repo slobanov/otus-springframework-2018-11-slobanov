@@ -6,14 +6,14 @@ import one.util.streamex.EntryStream;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.springframework.library.authors.Author;
+import ru.otus.springframework.library.dao.AuthorDAO;
 import ru.otus.springframework.library.dao.BookDAO;
-import ru.otus.springframework.library.dao.SimpleDAO;
+import ru.otus.springframework.library.dao.GenreDAO;
 import ru.otus.springframework.library.genres.Genre;
 
 import java.util.*;
 
 import static one.util.streamex.StreamEx.of;
-import static ru.otus.springframework.library.utils.OptionalUtils.asSingle;
 
 @Service
 @Slf4j
@@ -21,8 +21,8 @@ import static ru.otus.springframework.library.utils.OptionalUtils.asSingle;
 class BookServiceImpl implements BookService {
 
     private final BookDAO bookDAO;
-    private final SimpleDAO<Author> authorDAO;
-    private final SimpleDAO<Genre> genreDAO;
+    private final AuthorDAO authorDAO;
+    private final GenreDAO genreDAO;
 
     @Override
     public List<Book> all() {
@@ -41,7 +41,7 @@ class BookServiceImpl implements BookService {
 
     @Override
     public List<Book> ofGenre(String genre) {
-        var genreObj = asSingle(genreDAO.findByField("NAME", genre));
+        var genreObj = genreDAO.findByName(genre);
         return genreObj.map(bookDAO::findByGenre).orElse(Collections.emptyList());
     }
 
@@ -65,7 +65,7 @@ class BookServiceImpl implements BookService {
         var genreObjs = ensureGenres(genres);
         log.debug("genres: {}", genreObjs);
 
-        return bookDAO.save(new Book(
+        return bookDAO.saveObj(new Book(
                 isbn,
                 title,
                 authors,
@@ -90,7 +90,7 @@ class BookServiceImpl implements BookService {
 
     private Set<Genre> ensureGenres(Collection<String> genres) {
         var genreObjsMap = of(genres)
-                .mapToEntry(g -> asSingle(genreDAO.findByField("NAME", g)))
+                .mapToEntry(genreDAO::findByName)
                 .toMap();
 
         var genresOfBook = of(genreObjsMap.values()).flatMap(Optional::stream);
@@ -132,7 +132,7 @@ class BookServiceImpl implements BookService {
     @Transactional
     public Book addGenre(String isbn, String genre) {
         var book = getBookByIsbn(isbn);
-        var genreObj = asSingle(genreDAO.findByField("NAME", genre))
+        var genreObj = genreDAO.findByName(genre)
                 .orElseGet(() -> genreDAO.saveObj(new Genre(genre)));
 
         if (of(book.getGenres()).findAny(g -> g.equals(genreObj)).isPresent()) {

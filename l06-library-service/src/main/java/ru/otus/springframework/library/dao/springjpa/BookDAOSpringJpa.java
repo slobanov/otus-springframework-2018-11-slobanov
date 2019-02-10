@@ -2,7 +2,6 @@ package ru.otus.springframework.library.dao.springjpa;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import ru.otus.springframework.library.authors.Author;
@@ -15,26 +14,13 @@ import java.util.Optional;
 
 @Repository
 @ConditionalOnProperty(name = "library.dao.provider", havingValue = "spring-jpa")
-interface BookDAOSpringJpa extends CrudRepository<Book, Long>, BookDAO {
+interface BookDAOSpringJpa extends BaseDAOSpringJpa<Book>, BookDAO {
 
     String BOOK_SELECT =
             "         SELECT distinct b " +
             "           FROM Book b " +
             "     JOIN FETCH b.authors " +
             "     JOIN FETCH b.genres ";
-
-    @Override
-    Optional<Book> findById(Long id);
-
-    @Override
-    Book save(Book book);
-
-    @Override
-    default Optional<Book> deleteByObjId(Long id) {
-        var book = findById(id);
-        deleteById(id);
-        return book;
-    }
 
     @Override
     @Query(BOOK_SELECT)

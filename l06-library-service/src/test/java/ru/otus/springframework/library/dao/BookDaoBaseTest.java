@@ -30,10 +30,10 @@ public abstract class BookDaoBaseTest {
     private BookDAO bookDAOJdbc;
 
     @Autowired
-    private SimpleDAO<Author> authorDAO;
+    private AuthorDAO authorDAO;
 
     @Autowired
-    private SimpleDAO<Genre> genreDAO;
+    private GenreDAO genreDAO;
 
     @Test
     void fetchAll() {
@@ -175,7 +175,7 @@ public abstract class BookDaoBaseTest {
     void save() {
         var book = newBook();
         var initialSize = bookDAOJdbc.findAll().size();
-        var savedBook = bookDAOJdbc.save(book);
+        var savedBook = bookDAOJdbc.saveObj(book);
 
         var finalSize = bookDAOJdbc.findAll().size();
         assertThat(finalSize - initialSize, equalTo(1));

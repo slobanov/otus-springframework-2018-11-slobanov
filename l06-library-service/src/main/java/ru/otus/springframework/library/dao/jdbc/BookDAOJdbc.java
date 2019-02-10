@@ -151,7 +151,7 @@ class BookDAOJdbc implements BookDAO {
 
     @Override
     @Transactional
-    public Book save(Book book) {
+    public Book saveObj(Book book) {
         var keyHolder = new GeneratedKeyHolder();
         var sqlProperties = new BeanPropertySqlParameterSource(book);
 
