@@ -1,0 +1,2 @@
+library.dao.provider: "spring-jpa"
+spring.data.mongodb.repositories.type: NONE

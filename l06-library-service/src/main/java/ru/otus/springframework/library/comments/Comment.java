@@ -2,7 +2,6 @@ package ru.otus.springframework.library.comments;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.DynamicInsert;
 import ru.otus.springframework.library.books.Book;
 
 import javax.persistence.*;
@@ -13,7 +12,6 @@ import java.util.Date;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @NoArgsConstructor
-@DynamicInsert
 @Entity
 public class Comment {
     @Id

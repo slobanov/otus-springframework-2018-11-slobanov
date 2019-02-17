@@ -1,27 +1,25 @@
-package ru.otus.springframework.library.dao.springjpa;
+package ru.otus.springframework.library.dao.mongodb;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 import ru.otus.springframework.library.dao.SimpleDAO;
 
 import java.util.Optional;
 
 @NoRepositoryBean
-interface BaseDAOSpringJpa<T> extends CrudRepository<T, Long>, SimpleDAO<T> {
+interface BaseDAOMongodb<T> extends MongoRepository<T, Long>, SimpleDAO<T> {
 
     @Override
     Optional<T> findById(Long id);
 
     @Override
-    default T saveObj(T obj) {
-        return save(obj);
-    }
-
-    @Override
     default Optional<T> deleteByObjId(Long id) {
         var obj = findById(id);
-        obj.ifPresent(this::delete);
+        deleteById(id);
         return obj;
     }
+}
 
+interface CustomSave<T> {
+    T saveObj(T obj);
 }

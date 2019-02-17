@@ -1,12 +1,13 @@
 library:
-  postgres:
+  dao.provider: "spring-jpa"
+  db:
     url: "jdbc:postgresql://localhost:5432/postgres"
     username: "postgres"
     password: "password123"
 
 spring:
   datasource:
-    url: ${library.postgres.url}
-    username: ${library.postgres.username}
-    password: ${library.postgres.password}
-
+    url: ${library.db.url}
+    username: ${library.db.username}
+    password: ${library.db.password}
+  data.mongodb.repositories.type: NONE

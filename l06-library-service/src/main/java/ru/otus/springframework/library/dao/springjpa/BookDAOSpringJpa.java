@@ -32,11 +32,11 @@ interface BookDAOSpringJpa extends BaseDAOSpringJpa<Book>, BookDAO {
 
     @Override
     @Query(BOOK_SELECT + "WHERE :author MEMBER OF b.authors")
-    List<Book> findByAuthor(@Param("author") Author author);
+    List<Book> findByAuthors(@Param("author") Author author);
 
     @Override
     @Query(BOOK_SELECT + "WHERE :genre MEMBER OF b.genres")
-    List<Book> findByGenre(@Param("genre") Genre genre);
+    List<Book> findByGenres(@Param("genre") Genre genre);
 
     @Override
     default Book addAuthor(Book book, Author author) {

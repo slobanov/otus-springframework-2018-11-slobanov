@@ -13,10 +13,6 @@
     <artifactId>l01-student-testing</artifactId>
     <version>4.0.0</version>
 
-    <properties>
-        <jackson.csv.version>2.9.7</jackson.csv.version>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
@@ -30,7 +26,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-csv</artifactId>
-            <version>${jackson.csv.version}</version>
         </dependency>
 
         <dependency>

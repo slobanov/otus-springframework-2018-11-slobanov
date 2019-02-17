@@ -47,7 +47,7 @@ public abstract class BookDaoBaseTest {
     @ParameterizedTest
     @MethodSource("bookByAuthorProvider")
     void findByAuthor(Author author, Collection<Book> expected) {
-        var books = new HashSet<>(bookDAOJdbc.findByAuthor(author));
+        var books = new HashSet<>(bookDAOJdbc.findByAuthors(author));
         assertThat(books, equalTo(expected));
     }
 
@@ -82,7 +82,7 @@ public abstract class BookDaoBaseTest {
     @ParameterizedTest
     @MethodSource("bookByGenreProvider")
     void findByGenre(Genre genre, Collection<Book> expected) {
-        var books = new HashSet<>(bookDAOJdbc.findByGenre(genre));
+        var books = new HashSet<>(bookDAOJdbc.findByGenres(genre));
         assertThat(books, equalTo(expected));
     }
 

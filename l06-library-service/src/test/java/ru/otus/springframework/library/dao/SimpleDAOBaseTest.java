@@ -19,7 +19,6 @@ import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.params.provider.Arguments.of;
 
 @Transactional
@@ -82,16 +81,11 @@ public abstract class SimpleDAOBaseTest {
     @ParameterizedTest
     @MethodSource("authorProvider")
     void deleteById(Long id, Optional<Author> expectedAuthor) {
-        if (expectedAuthor.isPresent() && bookDAO.findByAuthor(expectedAuthor.get()).isEmpty()) {
+        if (expectedAuthor.isPresent() && bookDAO.findByAuthors(expectedAuthor.get()).isEmpty()) {
             var author = authorDAO.deleteByObjId(id);
             assertThat(author, equalTo(expectedAuthor));
             author.ifPresent(a -> assertThat(authorDAO.findAll(), not(hasItem(a))));
         }
-    }
-
-    @Test
-    void saveSQLFail() {
-        assertThrows(RuntimeException.class, () -> genreDAO.saveObj(new Genre("genre1")));
     }
 
     @Test
@@ -115,7 +109,7 @@ public abstract class SimpleDAOBaseTest {
         var comments = commentDAO.findByBookId(bookId);
 
         assertMapped(comments, expectedComments, Comment::getText);
-        assertMapped(comments, expectedComments, Comment::getBook);
+        assertMapped(comments, expectedComments, Comment::getBookId);
         assertMapped(comments, expectedComments, Comment::getId);
     }
 
@@ -124,8 +118,8 @@ public abstract class SimpleDAOBaseTest {
             Collection<Comment> expected,
             Function<Comment, ?> mapper) {
         assertThat(
-                StreamEx.of(actual).map(mapper).toList(),
-                equalTo(StreamEx.of(expected).map(mapper).toList())
+                StreamEx.of(actual).map(mapper).sorted().toList(),
+                equalTo(StreamEx.of(expected).map(mapper).sorted().toList())
         );
     }
 
@@ -179,6 +173,43 @@ public abstract class SimpleDAOBaseTest {
         return StreamEx.of(
                 of("genre2", new Genre(2L, "genre2"))
         );
+    }
+
+    @Test
+    void findCommentById() {
+        var id = 2L;
+        var comment = commentDAO.findById(id);
+        assertThat(comment.isPresent(), equalTo(true));
+        assertThat(comment.get().getText(), equalTo("comment2"));
+        assertThat(comment.get().getBookId(), equalTo(1L));
+    }
+
+    @Test
+    void findCommentByIdEmpty() {
+        var id = 42L;
+        assertThat(commentDAO.findById(id).isEmpty(), equalTo(true));
+    }
+
+    @Test
+    void deleteCommentById() {
+        var id = 1L;
+        var sizeBefore = commentDAO.findAll().size();
+        var comment = commentDAO.deleteByObjId(id);
+
+        assertThat(sizeBefore-commentDAO.findAll().size(), equalTo(1));
+        assertThat(comment.isPresent(), equalTo(true));
+        assertThat(comment.get().getText(), equalTo("comment1"));
+        assertThat(comment.get().getBookId(), equalTo(1L));
+    }
+
+    @Test
+    void deleteCommentByIdEmpty() {
+        var id = 42L;
+        var sizeBefore = commentDAO.findAll().size();
+        var comment = commentDAO.deleteByObjId(id);
+
+        assertThat(sizeBefore-commentDAO.findAll().size(), equalTo(0));
+        assertThat(comment.isEmpty(), equalTo(true));
     }
 
 }

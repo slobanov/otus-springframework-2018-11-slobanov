@@ -104,7 +104,7 @@ class BookDAOJdbc implements BookDAO {
     }
 
     @Override
-    public List<Book> findByAuthor(Author author) {
+    public List<Book> findByAuthors(Author author) {
         return jdbcOperations.query(
                 JOINED_SQL_REQUEST +
                         " WHERE BOOK.ID IN (" +
@@ -118,7 +118,7 @@ class BookDAOJdbc implements BookDAO {
     }
 
     @Override
-    public List<Book> findByGenre(Genre genre) {
+    public List<Book> findByGenres(Genre genre) {
         return jdbcOperations.query(
                 JOINED_SQL_REQUEST +
                         " WHERE BOOK.ID IN (" +

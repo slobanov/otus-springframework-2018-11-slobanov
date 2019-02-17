@@ -54,7 +54,7 @@ class BookServiceImplTest {
         var books = someBooks();
         var author = new Author(1L, "a", "b");
 
-        when(bookDAO.findByAuthor(author)).thenReturn(books);
+        when(bookDAO.findByAuthors(author)).thenReturn(books);
         when(authorDAO.findById(1L)).thenReturn(Optional.of(author));
 
         assertThat(bookService.writtenBy(1L), equalTo(books));
@@ -62,7 +62,7 @@ class BookServiceImplTest {
 
     @Test
     void writtenByNoAuthor() {
-        when(bookDAO.findByAuthor(any(Author.class))).thenReturn(emptyList());
+        when(bookDAO.findByAuthors(any(Author.class))).thenReturn(emptyList());
         when(authorDAO.findById(1L)).thenReturn(Optional.empty());
 
         assertThat(bookService.writtenBy(1L), equalTo(emptyList()));
@@ -73,7 +73,7 @@ class BookServiceImplTest {
         var books = someBooks();
         var genre = new Genre(1L, "genre");
 
-        when(bookDAO.findByGenre(genre)).thenReturn(books);
+        when(bookDAO.findByGenres(genre)).thenReturn(books);
         when(genreDAO.findByName("genre")).thenReturn(Optional.of(genre));
 
         assertThat(bookService.ofGenre("genre"), equalTo(books));
@@ -83,7 +83,7 @@ class BookServiceImplTest {
     void ofGenreNoGenre() {
         var books = someBooks();
 
-        when(bookDAO.findByGenre(any(Genre.class))).thenReturn(books);
+        when(bookDAO.findByGenres(any(Genre.class))).thenReturn(books);
         when(genreDAO.findByName(anyString())).thenReturn(Optional.empty());
 
         assertThat(bookService.ofGenre("genre"), equalTo(emptyList()));

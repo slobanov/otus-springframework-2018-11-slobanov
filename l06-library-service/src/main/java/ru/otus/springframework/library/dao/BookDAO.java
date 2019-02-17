@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BookDAO extends SimpleDAO<Book> {
-    List<Book> findByAuthor(Author author);
-    List<Book> findByGenre(Genre genre);
+    List<Book> findByAuthors(Author author);
+    List<Book> findByGenres(Genre genre);
 
     Optional<Book> findByIsbn(String isbn);
 

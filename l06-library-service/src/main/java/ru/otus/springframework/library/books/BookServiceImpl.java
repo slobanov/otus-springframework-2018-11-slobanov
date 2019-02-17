@@ -36,13 +36,13 @@ class BookServiceImpl implements BookService {
         var author = authorDAO.findById(authorId);
         log.debug("author: {}", author);
 
-        return author.map(bookDAO::findByAuthor).orElse(Collections.emptyList());
+        return author.map(bookDAO::findByAuthors).orElse(Collections.emptyList());
     }
 
     @Override
     public List<Book> ofGenre(String genre) {
         var genreObj = genreDAO.findByName(genre);
-        return genreObj.map(bookDAO::findByGenre).orElse(Collections.emptyList());
+        return genreObj.map(bookDAO::findByGenres).orElse(Collections.emptyList());
     }
 
     @Override

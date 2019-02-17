@@ -30,7 +30,7 @@ class BookDAOJpa extends SimpleDAOJpa<Book> implements BookDAO {
     }
 
     @Override
-    public List<Book> findByAuthor(Author author) {
+    public List<Book> findByAuthors(Author author) {
         return getEm().createQuery(BOOK_SELECT +
                         " WHERE :author MEMBER OF b.authors",
                 Book.class
@@ -38,7 +38,7 @@ class BookDAOJpa extends SimpleDAOJpa<Book> implements BookDAO {
     }
 
     @Override
-    public List<Book> findByGenre(Genre genre) {
+    public List<Book> findByGenres(Genre genre) {
         return getEm().createQuery(BOOK_SELECT +
                         " WHERE :genre MEMBER OF b.genres",
                 Book.class

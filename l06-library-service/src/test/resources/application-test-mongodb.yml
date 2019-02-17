@@ -1,0 +1,2 @@
+library.dao.provider: "spring-mongodb-jpa"
+spring.data.mongodb.database: "test"
