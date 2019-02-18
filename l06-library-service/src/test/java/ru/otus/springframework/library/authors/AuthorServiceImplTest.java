@@ -10,7 +10,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.springframework.dao.DataIntegrityViolationException;
-import ru.otus.springframework.library.dao.SimpleDAO;
+import ru.otus.springframework.library.dao.AuthorDAO;
 
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -25,11 +25,11 @@ class AuthorServiceImplTest {
 
     private AuthorService authorService;
 
-    private SimpleDAO<Author> authorDAO;
+    private AuthorDAO authorDAO;
 
     @BeforeEach
     void init() {
-        authorDAO = (SimpleDAO<Author>) mock(SimpleDAO.class);
+        authorDAO = mock(AuthorDAO.class);
         authorService = new AuthorServiceImpl(authorDAO);
     }
 

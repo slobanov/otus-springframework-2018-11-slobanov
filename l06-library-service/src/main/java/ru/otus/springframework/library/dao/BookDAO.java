@@ -7,16 +7,11 @@ import ru.otus.springframework.library.genres.Genre;
 import java.util.List;
 import java.util.Optional;
 
-public interface BookDAO {
-    List<Book> findAll();
-    List<Book> findByAuthor(Author author);
-    List<Book> findByGenre(Genre genre);
+public interface BookDAO extends SimpleDAO<Book> {
+    List<Book> findByAuthors(Author author);
+    List<Book> findByGenres(Genre genre);
 
-    Optional<Book> findById(Long id);
     Optional<Book> findByIsbn(String isbn);
-
-    Book save(Book book);
-    Optional<Book> deleteByObjId(Long id);
 
     Book addAuthor(Book book, Author author);
     Book addGenre(Book book, Genre genre);

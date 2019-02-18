@@ -30,10 +30,10 @@ public abstract class BookDaoBaseTest {
     private BookDAO bookDAOJdbc;
 
     @Autowired
-    private SimpleDAO<Author> authorDAO;
+    private AuthorDAO authorDAO;
 
     @Autowired
-    private SimpleDAO<Genre> genreDAO;
+    private GenreDAO genreDAO;
 
     @Test
     void fetchAll() {
@@ -47,7 +47,7 @@ public abstract class BookDaoBaseTest {
     @ParameterizedTest
     @MethodSource("bookByAuthorProvider")
     void findByAuthor(Author author, Collection<Book> expected) {
-        var books = new HashSet<>(bookDAOJdbc.findByAuthor(author));
+        var books = new HashSet<>(bookDAOJdbc.findByAuthors(author));
         assertThat(books, equalTo(expected));
     }
 
@@ -82,7 +82,7 @@ public abstract class BookDaoBaseTest {
     @ParameterizedTest
     @MethodSource("bookByGenreProvider")
     void findByGenre(Genre genre, Collection<Book> expected) {
-        var books = new HashSet<>(bookDAOJdbc.findByGenre(genre));
+        var books = new HashSet<>(bookDAOJdbc.findByGenres(genre));
         assertThat(books, equalTo(expected));
     }
 
@@ -175,7 +175,7 @@ public abstract class BookDaoBaseTest {
     void save() {
         var book = newBook();
         var initialSize = bookDAOJdbc.findAll().size();
-        var savedBook = bookDAOJdbc.save(book);
+        var savedBook = bookDAOJdbc.saveObj(book);
 
         var finalSize = bookDAOJdbc.findAll().size();
         assertThat(finalSize - initialSize, equalTo(1));

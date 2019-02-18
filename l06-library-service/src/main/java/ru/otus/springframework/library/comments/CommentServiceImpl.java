@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.otus.springframework.library.dao.BookDAO;
-import ru.otus.springframework.library.dao.SimpleDAO;
+import ru.otus.springframework.library.dao.CommentDAO;
 
 import java.util.Collections;
 import java.util.List;
@@ -15,13 +15,13 @@ import java.util.List;
 class CommentServiceImpl implements CommentService {
 
     private final BookDAO bookDAO;
-    private final SimpleDAO<Comment> commentDAO;
+    private final CommentDAO commentDAO;
 
     @Override
     public List<Comment> commentsFor(String isbn) {
         var book = bookDAO.findByIsbn(isbn);
         return book.map(
-                bk -> commentDAO.findByField("BOOK_ID", Long.toString(bk.getId()))
+                bk -> commentDAO.findByBookId(bk.getId())
         ).orElse(Collections.emptyList());
     }
 

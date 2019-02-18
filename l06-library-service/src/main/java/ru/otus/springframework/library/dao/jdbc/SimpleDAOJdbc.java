@@ -1,7 +1,9 @@
 package ru.otus.springframework.library.dao.jdbc;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import one.util.streamex.EntryStream;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
@@ -9,54 +11,24 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.springframework.library.dao.SimpleDAO;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
-import static java.lang.String.format;
-import static java.util.Map.entry;
 import static java.util.Map.of;
 import static java.util.Objects.requireNonNull;
 import static ru.otus.springframework.library.utils.OptionalUtils.asSingle;
 
 @Slf4j
+@RequiredArgsConstructor
 class SimpleDAOJdbc<T> implements SimpleDAO<T> {
 
-    private final String tableName;
-    private final RowMapper<T> rowMapper;
-    private final Map<String, String> sqlParams;
-
+    @Getter(AccessLevel.PACKAGE)
     private final NamedParameterJdbcOperations jdbcOperations;
 
+    private final String tableName;
     private final String insertQueryTemplate;
-
-    SimpleDAOJdbc(
-            String tableName,
-            RowMapper<T> rowMapper,
-            Map<String, String> sqlParams,
-            NamedParameterJdbcOperations jdbcOperations
-    ) {
-        this.tableName = tableName;
-        this.rowMapper = rowMapper;
-        this.sqlParams = new HashMap<>(sqlParams);
-        this.jdbcOperations = jdbcOperations;
-
-        this.insertQueryTemplate = buildInsertQueryTemplate();
-    }
-
-    private String buildInsertQueryTemplate() {
-        var insertParams = EntryStream.of(sqlParams).mapValues(v -> ':' + v)
-                .reduce((acc, curr) -> entry(
-                        acc.getKey() + ", " + curr.getKey(),
-                        acc.getValue() + ", " + curr.getValue()
-                )).map(e -> format("(%s) VALUES (%s)", e.getKey(), e.getValue())).orElse("");
-
-        var query = "INSERT INTO " + tableName + insertParams;
-        log.debug("insert query for table [{}]: {}", tableName, query);
-
-        return query;
-    }
+    @Getter(AccessLevel.PACKAGE)
+    private final RowMapper<T> rowMapper;
 
     @Override
     public List<T> findAll() {
@@ -75,17 +47,6 @@ class SimpleDAOJdbc<T> implements SimpleDAO<T> {
                 of("ID", id),
                 rowMapper
         ));
-
-    }
-
-    @Override
-    public List<T> findByField(String fieldName, String fieldValue) {
-        log.debug("findByField[{}]: fieldName = {}; fieldValue = {}", tableName, fieldName, fieldValue);
-        return jdbcOperations.query(
-                format("SELECT * FROM %s WHERE %s = :%s", tableName, fieldName, fieldName),
-                of(fieldName, fieldValue),
-                rowMapper
-        );
     }
 
     @Override

@@ -9,7 +9,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import ru.otus.springframework.library.books.Book;
 import ru.otus.springframework.library.dao.BookDAO;
-import ru.otus.springframework.library.dao.SimpleDAO;
+import ru.otus.springframework.library.dao.CommentDAO;
 
 import java.util.Collections;
 import java.util.Date;
@@ -27,12 +27,12 @@ class CommentServiceImplTest {
 
     private CommentService commentService;
 
-    private SimpleDAO<Comment> commentDAO;
+    private CommentDAO commentDAO;
     private BookDAO bookDAO;
 
     @BeforeEach
     void init() {
-        commentDAO = (SimpleDAO<Comment>) mock(SimpleDAO.class);
+        commentDAO = mock(CommentDAO.class);
         bookDAO = mock(BookDAO.class);
 
         commentService = new CommentServiceImpl(bookDAO, commentDAO);
@@ -42,7 +42,7 @@ class CommentServiceImplTest {
     @MethodSource("commentProvider")
     void commentsFor(List<Comment> expectedComments) {
         var isbn = "isbn";
-        when(commentDAO.findByField(eq("BOOK_ID"), anyString())).thenReturn(expectedComments);
+        when(commentDAO.findByBookId(anyLong())).thenReturn(expectedComments);
         when(bookDAO.findByIsbn(isbn)).thenReturn(Optional.of(mock(Book.class)));
 
         var resultComments = commentService.commentsFor(isbn);

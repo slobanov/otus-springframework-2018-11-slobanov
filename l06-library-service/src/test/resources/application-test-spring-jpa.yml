@@ -1,2 +1,1 @@
 library.dao.provider: "spring-jpa"
-spring.main.allow-bean-definition-overriding: true

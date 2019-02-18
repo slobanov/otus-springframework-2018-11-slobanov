@@ -1,6 +1,8 @@
 package ru.otus.springframework.library.books;
 
 import lombok.*;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 import ru.otus.springframework.library.authors.Author;
 import ru.otus.springframework.library.genres.Genre;
 
@@ -14,7 +16,9 @@ import static one.util.streamex.StreamEx.of;
 @RequiredArgsConstructor
 @NoArgsConstructor
 @Entity
+@Document
 public class Book {
+    @org.springframework.data.annotation.Id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,6 +31,7 @@ public class Book {
             joinColumns = @JoinColumn(name = "BOOK_ID"),
             inverseJoinColumns = @JoinColumn(name = "AUTHOR_ID")
     )
+    @DBRef
     private @NonNull Set<Author> authors;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -35,6 +40,7 @@ public class Book {
             joinColumns = @JoinColumn(name = "BOOK_ID"),
             inverseJoinColumns = @JoinColumn(name = "GENRE_ID")
     )
+    @DBRef
     private @NonNull Set<Genre> genres;
 
     public String getAuthorString() {

@@ -3,8 +3,9 @@ package ru.otus.springframework.library.books;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.otus.springframework.library.authors.Author;
+import ru.otus.springframework.library.dao.AuthorDAO;
 import ru.otus.springframework.library.dao.BookDAO;
-import ru.otus.springframework.library.dao.SimpleDAO;
+import ru.otus.springframework.library.dao.GenreDAO;
 import ru.otus.springframework.library.genres.Genre;
 
 import java.util.List;
@@ -24,14 +25,14 @@ class BookServiceImplTest {
     private BookService bookService;
 
     private BookDAO bookDAO;
-    private SimpleDAO<Author> authorDAO;
-    private SimpleDAO<Genre> genreDAO;
+    private AuthorDAO authorDAO;
+    private GenreDAO genreDAO;
 
     @BeforeEach
     void init() {
         bookDAO = mock(BookDAO.class);
-        authorDAO = (SimpleDAO<Author>) mock(SimpleDAO.class);
-        genreDAO = (SimpleDAO<Genre>) mock(SimpleDAO.class);
+        authorDAO = mock(AuthorDAO.class);
+        genreDAO = mock(GenreDAO.class);
 
         bookService = new BookServiceImpl(bookDAO, authorDAO, genreDAO);
     }
@@ -53,7 +54,7 @@ class BookServiceImplTest {
         var books = someBooks();
         var author = new Author(1L, "a", "b");
 
-        when(bookDAO.findByAuthor(author)).thenReturn(books);
+        when(bookDAO.findByAuthors(author)).thenReturn(books);
         when(authorDAO.findById(1L)).thenReturn(Optional.of(author));
 
         assertThat(bookService.writtenBy(1L), equalTo(books));
@@ -61,7 +62,7 @@ class BookServiceImplTest {
 
     @Test
     void writtenByNoAuthor() {
-        when(bookDAO.findByAuthor(any(Author.class))).thenReturn(emptyList());
+        when(bookDAO.findByAuthors(any(Author.class))).thenReturn(emptyList());
         when(authorDAO.findById(1L)).thenReturn(Optional.empty());
 
         assertThat(bookService.writtenBy(1L), equalTo(emptyList()));
@@ -72,8 +73,8 @@ class BookServiceImplTest {
         var books = someBooks();
         var genre = new Genre(1L, "genre");
 
-        when(bookDAO.findByGenre(genre)).thenReturn(books);
-        when(genreDAO.findByField("NAME", "genre")).thenReturn(List.of(genre));
+        when(bookDAO.findByGenres(genre)).thenReturn(books);
+        when(genreDAO.findByName("genre")).thenReturn(Optional.of(genre));
 
         assertThat(bookService.ofGenre("genre"), equalTo(books));
     }
@@ -82,8 +83,8 @@ class BookServiceImplTest {
     void ofGenreNoGenre() {
         var books = someBooks();
 
-        when(bookDAO.findByGenre(any(Genre.class))).thenReturn(books);
-        when(genreDAO.findByField(anyString(), anyString())).thenReturn(emptyList());
+        when(bookDAO.findByGenres(any(Genre.class))).thenReturn(books);
+        when(genreDAO.findByName(anyString())).thenReturn(Optional.empty());
 
         assertThat(bookService.ofGenre("genre"), equalTo(emptyList()));
     }
@@ -116,7 +117,7 @@ class BookServiceImplTest {
                 "g1", mock(Genre.class),
                 "g2", mock(Genre.class)
         );
-        genreMap.forEach((name, g) -> when(genreDAO.findByField("NAME", name)).thenReturn(List.of(g)));
+        genreMap.forEach((name, g) -> when(genreDAO.findByName(name)).thenReturn(Optional.of(g)));
 
         var book = new Book(
                 isbn,
@@ -126,7 +127,7 @@ class BookServiceImplTest {
         );
 
         when(bookService.withIsbn(isbn)).thenReturn(Optional.empty());
-        when(bookDAO.save(any(Book.class))).thenReturn(book);
+        when(bookDAO.saveObj(any(Book.class))).thenReturn(book);
 
         var resultBook = bookService.newBook(
                 isbn,
@@ -163,7 +164,7 @@ class BookServiceImplTest {
                 genres.get(0), mock(Genre.class),
                 genres.get(1), mock(Genre.class)
         );
-        genreMap.forEach((name, g) -> when(genreDAO.findByField("NAME", name)).thenReturn(List.of(g)));
+        genreMap.forEach((name, g) -> when(genreDAO.findByName(name)).thenReturn(Optional.of(g)));
 
         assertThrows(IllegalArgumentException.class,
                 () -> bookService.newBook(
@@ -194,8 +195,8 @@ class BookServiceImplTest {
                 "g2", mock(Genre.class)
         );
         genreMap.forEach((name, g) ->
-                when(genreDAO.findByField("NAME", name))
-                        .thenReturn("g1".equals(name) ? List.of(g) : List.of())
+                when(genreDAO.findByName(name))
+                        .thenReturn("g1".equals(name) ? Optional.of(g) : Optional.empty())
         );
 
         var book = new Book(
@@ -206,7 +207,7 @@ class BookServiceImplTest {
         );
 
         when(bookService.withIsbn(isbn)).thenReturn(Optional.empty());
-        when(bookDAO.save(any(Book.class))).thenReturn(book);
+        when(bookDAO.saveObj(any(Book.class))).thenReturn(book);
 
         var resultBook = bookService.newBook(
                 isbn,
@@ -313,7 +314,7 @@ class BookServiceImplTest {
 
         when(bookDAO.findByIsbn(bookIsbn)).thenReturn(Optional.of(book));
         when(bookDAO.addGenre(book, genreObj)).thenReturn(book);
-        when(genreDAO.findByField("NAME", genre)).thenReturn(List.of(genreObj));
+        when(genreDAO.findByName(genre)).thenReturn(Optional.of(genreObj));
 
         var newBook = bookService.addGenre(bookIsbn, genre);
 
@@ -332,7 +333,7 @@ class BookServiceImplTest {
         var book = new Book(bookId, bookIsbn, "title", Set.of(), Set.of(genreObj));
 
         when(bookDAO.findByIsbn(bookIsbn)).thenReturn(Optional.of(book));
-        when(genreDAO.findByField("NAME", genre)).thenReturn(List.of(genreObj));
+        when(genreDAO.findByName(genre)).thenReturn(Optional.of(genreObj));
 
         assertThrows(IllegalArgumentException.class, () -> bookService.addGenre(bookIsbn, genre));
 
@@ -349,6 +350,6 @@ class BookServiceImplTest {
         when(bookDAO.findByIsbn(bookIsbn)).thenReturn(Optional.empty());
         assertThrows(IllegalArgumentException.class, () -> bookService.addGenre(bookIsbn, genre));
         verify(bookDAO).findByIsbn(bookIsbn);
-        verify(genreDAO, never()).findByField("NAME", genre);
+        verify(genreDAO, never()).findByName(genre);
     }
 }

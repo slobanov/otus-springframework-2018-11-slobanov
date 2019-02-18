@@ -9,8 +9,6 @@ import ru.otus.springframework.library.books.Book;
 import ru.otus.springframework.library.dao.BookDAO;
 import ru.otus.springframework.library.genres.Genre;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,10 +17,7 @@ import static ru.otus.springframework.library.utils.OptionalUtils.asSingle;
 @Repository
 @Slf4j
 @ConditionalOnProperty(name = "library.dao.provider", havingValue = "jpa")
-class BookDAOJpa implements BookDAO {
-
-    @PersistenceContext
-    private EntityManager em;
+class BookDAOJpa extends SimpleDAOJpa<Book> implements BookDAO {
 
     private static final String BOOK_SELECT =
        "         SELECT distinct b " +
@@ -30,38 +25,29 @@ class BookDAOJpa implements BookDAO {
        "     JOIN FETCH b.authors " +
        "     JOIN FETCH b.genres ";
 
-    @Override
-    public List<Book> findAll() {
-        return em.createQuery(
-                BOOK_SELECT,
-                Book.class
-        ).getResultList();
+    BookDAOJpa() {
+        super(Book.class, BOOK_SELECT);
     }
 
     @Override
-    public List<Book> findByAuthor(Author author) {
-        return em.createQuery(BOOK_SELECT +
+    public List<Book> findByAuthors(Author author) {
+        return getEm().createQuery(BOOK_SELECT +
                         " WHERE :author MEMBER OF b.authors",
                 Book.class
         ).setParameter("author", author).getResultList();
     }
 
     @Override
-    public List<Book> findByGenre(Genre genre) {
-        return em.createQuery(BOOK_SELECT +
+    public List<Book> findByGenres(Genre genre) {
+        return getEm().createQuery(BOOK_SELECT +
                         " WHERE :genre MEMBER OF b.genres",
                 Book.class
         ).setParameter("genre", genre).getResultList();
     }
 
     @Override
-    public Optional<Book> findById(Long id) {
-        return Optional.ofNullable(em.find(Book.class, id));
-    }
-
-    @Override
     public Optional<Book> findByIsbn(String isbn) {
-        return asSingle(em.createQuery(BOOK_SELECT +
+        return asSingle(getEm().createQuery(BOOK_SELECT +
                         " WHERE b.isbn = :isbn",
                 Book.class
         ).setParameter("isbn", isbn).getResultList());
@@ -69,31 +55,16 @@ class BookDAOJpa implements BookDAO {
 
     @Override
     @Transactional
-    public Book save(Book book) {
-        em.persist(book);
-        return book;
-    }
-
-    @Override
-    @Transactional
-    public Optional<Book> deleteByObjId(Long id) {
-        var book = findById(id);
-        book.ifPresent(em::remove);
-        return book;
-    }
-
-    @Override
-    @Transactional
     public Book addAuthor(Book book, Author author) {
         book.getAuthors().add(author);
-        return em.merge(book);
+        return getEm().merge(book);
     }
 
     @Override
     @Transactional
     public Book addGenre(Book book, Genre genre) {
         book.getGenres().add(genre);
-        return em.merge(book);
+        return getEm().merge(book);
     }
 
 }

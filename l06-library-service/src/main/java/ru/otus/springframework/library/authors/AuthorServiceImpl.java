@@ -2,7 +2,7 @@ package ru.otus.springframework.library.authors;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.otus.springframework.library.dao.SimpleDAO;
+import ru.otus.springframework.library.dao.AuthorDAO;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +13,7 @@ import static java.lang.String.format;
 @RequiredArgsConstructor
 class AuthorServiceImpl implements AuthorService {
 
-    private final SimpleDAO<Author> authorDAO;
+    private final AuthorDAO authorDAO;
 
     @Override
     public List<Author> all() {

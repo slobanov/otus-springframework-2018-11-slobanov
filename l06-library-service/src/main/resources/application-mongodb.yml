@@ -1,0 +1,14 @@
+library:
+  dao.provider: "spring-mongodb-jpa"
+  db:
+    url: "mongodb://localhost:27017"
+    name: "library"
+
+spring:
+  liquibase.enabled: "false"
+
+  data:
+    mongodb:
+      database: ${library.db.name}
+      uri: ${library.db.url}
+    jpa.repositories.enabled: "false"

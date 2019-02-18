@@ -1,13 +1,12 @@
 library:
   prompt: "library:>"
-  dao.provider: "spring-jpa"
 
 spring:
+  profiles.active: "mongodb"
   banner.location: "classpath:/banner.txt"
   liquibase:
     change-log: "classpath:db/changelog/db.changelog-master.xml"
 
 logging.level:
   root: "WARN"
-
 

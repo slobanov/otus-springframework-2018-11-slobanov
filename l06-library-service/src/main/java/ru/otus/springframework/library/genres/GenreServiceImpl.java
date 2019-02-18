@@ -3,19 +3,17 @@ package ru.otus.springframework.library.genres;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.otus.springframework.library.dao.SimpleDAO;
+import ru.otus.springframework.library.dao.GenreDAO;
 
 import java.util.List;
 import java.util.Optional;
-
-import static ru.otus.springframework.library.utils.OptionalUtils.asSingle;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 class GenreServiceImpl implements GenreService {
 
-    private final SimpleDAO<Genre> genreDAO;
+    private final GenreDAO genreDAO;
 
     @Override
     public List<Genre> all() {
@@ -43,6 +41,6 @@ class GenreServiceImpl implements GenreService {
     }
 
     private Optional<Genre> findByName(String name) {
-        return asSingle(genreDAO.findByField("NAME", name));
+        return genreDAO.findByName(name);
     }
 }
