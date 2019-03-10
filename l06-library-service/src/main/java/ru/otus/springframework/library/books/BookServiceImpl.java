@@ -150,4 +150,19 @@ class BookServiceImpl implements BookService {
         );
     }
 
+    @Override
+    public List<Genre> genresExceptBook(Book book) {
+        return removeFromAll(genreDAO.findAll(), book.getGenres());
+    }
+
+    @Override
+    public List<Author> authorsExceptBook(Book book) {
+        return removeFromAll(authorDAO.findAll(), book.getAuthors());
+    }
+
+    private static <T> List<T> removeFromAll(List<T> list, Collection<T> set) {
+        var newList = new ArrayList<>(list);
+        newList.removeAll(set);
+        return newList;
+    }
 }

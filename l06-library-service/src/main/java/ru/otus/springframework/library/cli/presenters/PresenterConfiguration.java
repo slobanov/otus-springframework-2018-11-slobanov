@@ -2,6 +2,7 @@ package ru.otus.springframework.library.cli.presenters;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import ru.otus.springframework.library.authors.Author;
 import ru.otus.springframework.library.books.Book;
 import ru.otus.springframework.library.comments.Comment;
@@ -10,6 +11,7 @@ import ru.otus.springframework.library.genres.Genre;
 import static one.util.streamex.EntryStream.of;
 
 @Configuration
+@Profile("shell")
 class PresenterConfiguration {
 
     @Bean

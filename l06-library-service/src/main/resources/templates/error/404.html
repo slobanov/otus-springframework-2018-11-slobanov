@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+
+    <link rel="stylesheet" type="text/css"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/flat-ui/2.3.0/css/flat-ui.min.css"
+    />
+    <link rel="stylesheet" type="text/css"
+          href="../css/style.css"
+          th:href="@{/css/style.css}"
+    />
+
+</head>
+
+<body>
+
+<header>
+
+    <nav class="navbar navbar-expand-lg sticky" role="navigation">
+        <a class="navbar-brand" href="books.html" th:href="@{/books}">Library</a>
+        <ul class="nav navbar-nav mr-auto btn-group">
+            <li><a href="/books.html" th:href="@{/books}">Books</a></li>
+            <li><a class="inactive" href="authors.html" th:href="@{/authors}">Authors</a></li>
+            <li><a class="inactive" href="genres.html" th:href="@{/genres}">Genres</a></li>
+        </ul>
+    </nav>
+
+</header>
+
+<main class="container">
+    <h3>We couldn't find the page you are looking for.</h3>
+</main>
+
+</body>
+
+</html>

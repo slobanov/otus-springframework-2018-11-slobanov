@@ -2,7 +2,9 @@ library:
   prompt: "library:>"
 
 spring:
-  profiles.active: "mongodb"
+  profiles.active:
+      - "mongodb"
+      - "mvc"
   banner.location: "classpath:/banner.txt"
   liquibase:
     change-log: "classpath:db/changelog/db.changelog-master.xml"

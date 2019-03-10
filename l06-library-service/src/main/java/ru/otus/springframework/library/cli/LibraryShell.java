@@ -1,6 +1,7 @@
 package ru.otus.springframework.library.cli;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
@@ -20,6 +21,7 @@ import javax.validation.constraints.NotBlank;
 import static java.util.Arrays.asList;
 
 @ShellComponent
+@Profile("shell")
 @RequiredArgsConstructor
 class LibraryShell {
 
@@ -105,7 +107,7 @@ class LibraryShell {
         return presenterService.present(genreService.removeGenre(name), Genre.class);
     }
 
-    @ShellMethod("Remove genre.")
+    @ShellMethod("Remove author.")
     Table removeAuthor(@ShellOption({"-a", "--authorId"}) Long authorId) {
         return presenterService.present(authorService.removeAuthor(authorId), Author.class);
     }

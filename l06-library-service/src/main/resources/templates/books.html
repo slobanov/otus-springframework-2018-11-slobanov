@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <link rel="stylesheet" type="text/css"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/flat-ui/2.3.0/css/flat-ui.min.css"
+    />
+    <link rel="stylesheet" type="text/css"
+          href="../static/css/style.css"
+          th:href="@{/css/style.css}"
+    />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        checkSelect = (name) => {
+            var selectTag = $(`#${name}`);
+            var isValid = $(`#${name} > option:selected`).length > 0;
+            if (!isValid) {
+                selectTag.addClass("error");
+            } else {
+                selectTag.removeClass("error");
+            }
+            return isValid;
+        };
+
+        checkAuthors = () => checkSelect("authorsIds");
+        checkGenres = () => checkSelect("genres");
+        $(() => [checkAuthors, checkGenres].map(f => $('form').submit(f)));
+    </script>
+</head>
+
+<body>
+
+<header>
+
+    <nav class="navbar navbar-expand-lg sticky" role="navigation">
+        <a class="navbar-brand" href="books.html" th:href="@{/books}">Library</a>
+        <ul class="nav navbar-nav mr-auto btn-group">
+            <li><a href="books.html" th:href="books">Books</a></li>
+            <li><a class="inactive" href="authors.html" th:href="authors">Authors</a></li>
+            <li><a class="inactive" href="genres.html" th:href="genres">Genres</a></li>
+        </ul>
+    </nav>
+
+</header>
+
+<main class="container">
+
+    <table>
+        <thead>
+        <tr>
+            <th>ISBN</th>
+            <th>Title</th>
+            <th>Authors</th>
+            <th>Genres</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="book: ${books}">
+            <td>
+                <a href="book.html"
+                   th:href="@{'book/' + ${book.isbn}}" th:text="${book.isbn}">
+                    9780321601919
+                </a>
+            </td>
+            <td th:text="${book.title}">Continuous Delivery</td>
+            <td>
+                <div th:each="author, iterStat: ${book.sortedAuthors()}">
+                    <a href="author.html"
+                       th:href="@{'/author/' + ${author.id}}"
+                       th:text="${author.displayName()} + (${iterStat.last} ? '': ', ')">
+                        Jez Humble [1]
+                    </a>
+                </div>
+            </td>
+            <td>
+                <div th:each="genre, iterStat: ${book.sortedGenres()}">
+                    <a href="genre.html"
+                       th:href="@{'/genre/' + ${genre.name}}"
+                       th:text="${genre.name} + (${iterStat.last} ? '': ', ')">
+                        computer science
+                    </a>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</main>
+
+<section id="new-book-form" class="container">
+    <div class="row">
+        <form class="col-md-auto" action="#" th:action="@{/book/add}" method="post">
+            <div class="row">
+                <p class="col"><input type="text" name="isbn" required="required" placeholder="ISBN"/></p>
+                <p class="col"><input type="text" name="title" required="required" placeholder="Title"/></p>
+                <div class="col select">
+                    <select multiple size="3" name="authorIds" id="authorsIds">
+                        <option
+                                th:each="author: ${authors}"
+                                th:value="${author.id}"
+                                th:text="${author.displayName()}">
+                            Jez Humble [1]
+                        </option>
+                    </select>
+                </div>
+                <div class="col select">
+                    <select multiple size="3" name="genres" id="genres">
+                        <option
+                                th:each="genre: ${genres}"
+                                th:value="${genre.name}"
+                                th:text="${genre.name}">
+                            computer science
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <input class="btn" type="submit" value="Add new book"/>
+        </form>
+    </div>
+</section>
+
+</body>
+
+</html>

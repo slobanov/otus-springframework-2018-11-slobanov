@@ -3,10 +3,12 @@ package ru.otus.springframework.library.cli;
 import org.jline.utils.AttributedString;
 import org.jline.utils.AttributedStyle;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.shell.jline.PromptProvider;
 import org.springframework.stereotype.Service;
 
 @Service
+@Profile("shell")
 class LibraryPromptProvider implements PromptProvider {
     private final String prompt;
 

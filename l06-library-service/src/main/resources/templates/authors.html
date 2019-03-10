@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <link rel="stylesheet" type="text/css"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/flat-ui/2.3.0/css/flat-ui.min.css"
+    />
+    <link rel="stylesheet" type="text/css"
+          href="../static/css/style.css"
+          th:href="@{/css/style.css}"
+    />
+
+</head>
+
+<body>
+
+<header>
+
+    <nav class="navbar navbar-expand-lg sticky" role="navigation">
+        <a class="navbar-brand" href="books.html" th:href="@{/books}">Library</a>
+        <ul class="nav navbar-nav mr-auto btn-group">
+            <li><a class="inactive" href="books.html" th:href="books">Books</a></li>
+            <li><a href="authors.html" th:href="authors">Authors</a></li>
+            <li><a class="inactive" href="genres.html" th:href="genres">Genres</a></li>
+        </ul>
+    </nav>
+
+</header>
+
+<main class="container">
+
+    <table>
+        <thead>
+        <tr>
+            <th class="col-2">Id</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="author: ${authors}">
+            <td class="col-2">
+                <a href="author.html"
+                   th:href="@{'author/' + ${author.id}}" th:text="${author.id}">
+                    1
+                </a>
+            </td>
+            <td th:text="${author.firstName}">Jez</td>
+            <td th:text="${author.lastName}">Humble</td>
+        </tr>
+        </tbody>
+    </table>
+
+</main>
+
+<section id="new-author-form" class="container">
+    <div class="row">
+        <form class="col-md-auto" action="#" th:action="@{/author/add}" method="post">
+            <div class="row">
+                <p class="col-md-auto"><input class="col-md-auto" type="text" name="firstName" required="required" placeholder="First Name"/></p>
+                <p class="col-md-auto"><input type="text" name="lastName" required="required" placeholder="Last Name"/></p>
+            </div>
+            <input class="btn" type="submit" value="Add new author"/>
+        </form>
+    </div>
+</section>
+
+</body>
+
+</html>
