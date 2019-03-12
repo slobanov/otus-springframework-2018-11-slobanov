@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <link rel="stylesheet" type="text/css"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/flat-ui/2.3.0/css/flat-ui.min.css"
+    />
+    <link rel="stylesheet" type="text/css"
+          href="../static/css/style.css"
+          th:href="@{/css/style.css}"
+    />
+
+</head>
+
+<body>
+
+<header>
+
+    <nav class="navbar navbar-expand-lg sticky" role="navigation">
+        <a class="navbar-brand" href="books.html" th:href="@{/books}">Library</a>
+        <ul class="nav navbar-nav mr-auto btn-group">
+            <li><a class="inactive" href="books.html" th:href="books">Books</a></li>
+            <li><a class="inactive" href="authors.html" th:href="authors">Authors</a></li>
+            <li><a href="genres.html" th:href="genres">Genres</a></li>
+        </ul>
+    </nav>
+
+</header>
+
+<main class="container">
+
+    <table>
+        <thead>
+            <tr>
+                <th>Genre</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="genre: ${genres}">
+                <td>
+                    <a href="genre.html"
+                       th:href="@{'genre/' + ${genre.name}}" th:text="${genre.name}">
+                        computer science
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</main>
+
+<section id="new-genre-form" class="container">
+    <div class="row">
+        <form class="col-md-auto" action="#" th:action="@{/genre/add}" method="post">
+            <p><input type="text" name="genre" required="required" placeholder="Genre"/></p>
+            <p><input class="btn" type="submit" value="Add new genre"/></p>
+        </form>
+    </div>
+</section>
+
+</body>
+
+</html>

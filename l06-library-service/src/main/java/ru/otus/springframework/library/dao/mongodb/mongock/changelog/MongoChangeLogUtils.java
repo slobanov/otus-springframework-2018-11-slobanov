@@ -73,9 +73,6 @@ class MongoChangeLogUtils {
                 .forEach(p -> {
                     var book = bookMap.get(parseLong(p.getFirst()));
                     var author = authorMap.get(parseLong(p.getSecond()));
-                    if (book.getAuthors() == null) {
-                        book.setAuthors(new HashSet<>());
-                    }
                     book.getAuthors().add(author);
                 });
 
@@ -98,7 +95,7 @@ class MongoChangeLogUtils {
                     var text = p.getSecond();
                     var bookId = parseLong(p.getFirst());
                     var comment = new MongoComment(newId(mongoOps, "comment"), text, new Date());
-                    commentsMap.computeIfAbsent(bookId, (id) -> new BookComments(id, new HashSet<>()));
+                    commentsMap.computeIfAbsent(bookId, id -> new BookComments(id, new HashSet<>()));
                     commentsMap.get(bookId).getComments().add(comment);
                 });
 

@@ -17,6 +17,7 @@ import static java.util.Collections.emptyList;
 import static one.util.streamex.StreamEx.of;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -351,5 +352,37 @@ class BookServiceImplTest {
         assertThrows(IllegalArgumentException.class, () -> bookService.addGenre(bookIsbn, genre));
         verify(bookDAO).findByIsbn(bookIsbn);
         verify(genreDAO, never()).findByName(genre);
+    }
+
+    @Test
+    void genresExceptBookTest() {
+        var g1 = mock(Genre.class);
+        var g2 = mock(Genre.class);
+        var g3 = mock(Genre.class);
+
+        var genres = List.of(g1, g2);
+        when(genreDAO.findAll()).thenReturn(genres);
+
+        var book = new Book("123", "title", Set.of(), Set.of(g1, g3));
+
+        var resGenres = bookService.genresExceptBook(book);
+        assertThat(resGenres, hasSize(1));
+        assertThat(resGenres, equalTo(List.of(g2)));
+    }
+
+    @Test
+    void authorsExceptBookTest() {
+        var a1 = mock(Author.class);
+        var a2 = mock(Author.class);
+        var a3 = mock(Author.class);
+
+        var authors = List.of(a1, a2, a3);
+        when(authorDAO.findAll()).thenReturn(authors);
+
+        var book = new Book("123", "title", Set.of(a1, a3), Set.of());
+
+        var resAuthors = bookService.authorsExceptBook(book);
+        assertThat(resAuthors, hasSize(1));
+        assertThat(resAuthors, equalTo(List.of(a2)));
     }
 }

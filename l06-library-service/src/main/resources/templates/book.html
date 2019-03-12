@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <link rel="stylesheet" type="text/css"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/flat-ui/2.3.0/css/flat-ui.min.css"
+    />
+    <link rel="stylesheet" type="text/css"
+          href="../static/css/style.css"
+          th:href="@{/css/style.css}"
+    />
+
+</head>
+
+<header>
+
+    <nav class="navbar navbar-expand-lg sticky" role="navigation">
+        <a class="navbar-brand" href="books.html" th:href="@{/books}">Library</a>
+        <ul class="nav navbar-nav mr-auto btn-group">
+            <li><a href="books.html" th:href="@{/books}">Books</a></li>
+            <li><a class="inactive" href="authors.html" th:href="@{/authors}">Authors</a></li>
+            <li><a class="inactive" href="genres.html" th:href="@{/genres}">Genres</a></li>
+        </ul>
+    </nav>
+
+</header>
+
+<body>
+
+<main class="container">
+
+    <div class="row">
+        <table class="col-6">
+            <tbody>
+            <tr>
+                <td>ISBN</td>
+                <td th:text="${book.isbn}">9780321601919</td>
+            </tr>
+            <tr>
+                <td>Title</td>
+                <td th:text="${book.title}">Continuous Delivery</td>
+            </tr>
+            <tr>
+                <td>Authors</td>
+                <td>
+                    <div th:each="author, iterStat: ${book.sortedAuthors()}">
+                        <a href="author.html"
+                           th:href="@{'/author/' + ${author.id}}"
+                           th:text="${author.displayName()} + (${iterStat.last} ? '': ', ')">
+                            Jez Humble [1]
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>Genres</td>
+                <td>
+                    <div th:each="genre, iterStat: ${book.sortedGenres()}">
+                        <a href="genre.html"
+                           th:href="@{'/genre/' + ${genre.name}}"
+                           th:text="${genre.name} + (${iterStat.last} ? '': ', ')">
+                            computer science
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>Comments</td>
+                <td>
+                    <div th:each="comment, iterStat: ${comments}">
+                            <span th:text="${comment.text} + (${iterStat.last} ? '': ', ')">
+                                awesome comment
+                            </span>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="col-md-auto">
+            <form class="col-md-auto" action="#" th:action="@{'/book/' + ${book.isbn} + '/delete'}" method="post">
+                <input class="btn" type="submit" value="Remove book"/>
+            </form>
+            <form class="col-md-auto" action="#" th:action="@{'/book/' + ${book.isbn} + '/addAuthor'}" method="post">
+                <select class="select" required size="3" name="authorId">
+                    <option
+                            th:each="author: ${otherAuthors}"
+                            th:value="${author.id}"
+                            th:text="${author.displayName()}">
+                        Jez Humble [1]
+                    </option>
+                </select>
+                <input class="btn" type="submit" value="Add author"/>
+            </form>
+            <form class="col-md-auto" action="#" th:action="@{'/book/' + ${book.isbn} + '/addGenre'}" method="post">
+                <select class="select" required size="3" name="genre">
+                    <option
+                            th:each="genre: ${otherGenres}"
+                            th:value="${genre.name}"
+                            th:text="${genre.name}">
+                        computer science
+                    </option>
+                </select>
+                <input class="btn" type="submit" value="Add genre"/>
+            </form>
+            <form class="col-md-auto" action="#" th:action="@{'/book/' + ${book.isbn} + '/addComment'}" method="post">
+                <div><textarea required name="comment" rows="3" placeholder="comment..." th:value="${comment}"></textarea></div>
+                <input class="btn" type="submit" value="Add comment"/>
+            </form>
+        </div>
+    </div>
+
+
+</main>
+
+</body>
+
+</html>

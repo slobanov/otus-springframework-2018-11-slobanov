@@ -13,7 +13,7 @@ import ru.otus.springframework.library.genres.Genre;
 
 @Repository
 @ConditionalOnProperty(name = "library.dao.provider", havingValue = "spring-mongodb-jpa")
-interface BookDAOMongodb extends BaseDAOMongodb<Book>, BookDAO {
+interface BookDAOMongodb extends BaseDAOMongodb<Book>, BookDAO, CustomSave<Book> {
 
     @Override
     default Book addAuthor(Book book, Author author) {

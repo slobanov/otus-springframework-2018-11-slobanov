@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <link rel="stylesheet" type="text/css"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/flat-ui/2.3.0/css/flat-ui.min.css"
+    />
+    <link rel="stylesheet" type="text/css"
+          href="../static/css/style.css"
+          th:href="@{/css/style.css}"
+    />
+
+</head>
+
+<body>
+
+<header>
+
+    <nav class="navbar navbar-expand-lg sticky" role="navigation">
+        <a class="navbar-brand" href="books.html" th:href="@{/books}">Library</a>
+        <ul class="nav navbar-nav mr-auto btn-group">
+            <li><a class="inactive" href="books.html" th:href="@{/books}">Books</a></li>
+            <li><a class="inactive" href="authors.html" th:href="@{/authors}">Authors</a></li>
+            <li><a href="genres.html" th:href="@{/genres}">Genres</a></li>
+        </ul>
+    </nav>
+
+</header>
+
+<main class="container">
+
+    <div class="row">
+        <table class="col-6">
+            <tbody>
+            <tr>
+                <td>Genre</td>
+                <td th:text="${genre}">computer science</td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="col-md-auto">
+            <form action="#" th:action="@{'/genre/' + ${genre} + '/delete'}" method="post">
+                <input class="btn" type="submit" value="Remove genre"/>
+            </form>
+        </div>
+    </div>
+
+</main>
+
+<section id="books-of-genre" class="container">
+
+    <table>
+        <thead>
+        <tr>
+            <th>ISBN</th>
+            <th>Title</th>
+            <th>Authors</th>
+            <th>Genres</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="book: ${books}">
+            <td>
+                <a href="book.html"
+                   th:href="@{'/book/' + ${book.isbn}}" th:text="${book.isbn}">
+                    9780321601919
+                </a>
+            </td>
+            <td th:text="${book.title}">Continuous Delivery</td>
+            <td>
+                <div th:each="author, iterStat: ${book.sortedAuthors()}">
+                    <a href="author.html"
+                       th:href="@{'/author/' + ${author.id}}"
+                       th:text="${author.displayName()} + (${iterStat.last} ? '': ', ')">
+                        Jez Humble [1]
+                    </a>
+                </div>
+            </td>
+            <td>
+                <div th:each="genre, iterStat: ${book.sortedGenres()}">
+                    <a href="genre.html"
+                       th:href="@{'/genre/' + ${genre.name}}"
+                       th:text="${genre.name} + (${iterStat.last} ? '': ', ')">
+                        computer science
+                    </a>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</section>
+
+</body>
+
+</html>

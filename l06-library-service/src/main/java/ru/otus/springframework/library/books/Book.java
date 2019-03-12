@@ -7,8 +7,11 @@ import ru.otus.springframework.library.authors.Author;
 import ru.otus.springframework.library.genres.Genre;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import static java.util.stream.Collectors.toCollection;
 import static one.util.streamex.StreamEx.of;
 
 @Data
@@ -43,17 +46,47 @@ public class Book {
     @DBRef
     private @NonNull Set<Genre> genres;
 
+    public Set<Genre> getGenres() {
+        if (genres == null) {
+            genres = new HashSet<>();
+        }
+        genres = filterNulls(genres);
+        return genres;
+    }
+
+    public Set<Author> getAuthors() {
+        if (authors == null) {
+            authors = new HashSet<>();
+        }
+        authors = filterNulls(authors);
+        return authors;
+    }
+
     public String getAuthorString() {
-        return of(authors)
-                .sortedBy(Author::getId)
+        return of(sortedAuthors())
                 .map(Author::displayName)
                 .joining(", ");
     }
 
     public String getGenreString() {
-        return of(genres)
-                .sortedBy(Genre::getId)
+        return of(sortedGenres())
                 .map(Genre::getName).joining(", ");
+    }
+
+    public List<Author> sortedAuthors() {
+        return of(getAuthors())
+                .sortedBy(Author::getId)
+                .toList();
+    }
+
+    public List<Genre> sortedGenres() {
+        return of(getGenres())
+                .sortedBy(Genre::getId)
+                .toList();
+    }
+
+    private static <T> Set<T> filterNulls(Set<T> set) {
+        return of(set).nonNull().collect(toCollection(HashSet::new));
     }
 
 }
