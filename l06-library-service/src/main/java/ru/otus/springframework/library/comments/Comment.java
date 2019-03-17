@@ -1,5 +1,6 @@
 package ru.otus.springframework.library.comments;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import ru.otus.springframework.library.books.Book;
@@ -28,10 +29,12 @@ public class Comment {
     @Column(updatable = false, insertable = false)
     private Date created;
 
+    @JsonIgnore
     public String getPrettyDate() {
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(created);
     }
 
+    @JsonIgnore
     public Long getBookId() {
         return book.getId();
     }

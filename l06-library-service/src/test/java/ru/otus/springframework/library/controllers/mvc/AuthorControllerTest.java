@@ -56,6 +56,7 @@ class AuthorControllerTest {
         assertThat(modelAndView.getModel(), hasEntry("authors", authors));
     }
 
+    @Test
     void addAuthor() throws Exception {
         var firstName = "fName";
         var lastName = "lName";

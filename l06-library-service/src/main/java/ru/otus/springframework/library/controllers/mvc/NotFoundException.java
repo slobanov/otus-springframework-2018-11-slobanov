@@ -6,5 +6,5 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 @RequiredArgsConstructor
-class NotFoundException extends IllegalArgumentException {
+public class NotFoundException extends IllegalArgumentException {
 }

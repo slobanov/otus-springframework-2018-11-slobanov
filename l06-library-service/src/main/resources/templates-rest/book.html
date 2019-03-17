@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/flat-ui/2.3.0/css/flat-ui.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/style.css"/>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/js/common.js"></script>
+    <script src="/js/book.js"></script>
+</head>
+
+<header>
+    <nav class="navbar navbar-expand-lg sticky" role="navigation">
+        <a class="navbar-brand" href="/books">Library</a>
+        <ul class="nav navbar-nav mr-auto btn-group">
+            <li><a href="/books">Books</a></li>
+            <li><a class="inactive" href="/authors">Authors</a></li>
+            <li><a class="inactive" href="/genres">Genres</a></li>
+        </ul>
+    </nav>
+</header>
+
+<body>
+
+<main class="container">
+
+    <div class="row">
+
+        <table class="col-6">
+            <tbody id="book">
+                <tr>
+                    <td>ISBN</td>
+                    <td id="isbn"></td>
+                </tr>
+                <tr>
+                    <td>Title</td>
+                    <td id="title"></td>
+                </tr>
+                <tr>
+                    <td>Authors</td>
+                    <td id="authors"></td>
+                </tr>
+                <tr>
+                    <td>Genres</td>
+                    <td id="book-genres"></td>
+                </tr>
+                <tr>
+                    <td>Comments</td>
+                    <td id="comments"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="col-md-auto">
+            <form class="col-md-auto" method="post" id="remove-book">
+                <input class="btn" type="submit" value="Remove book"/>
+            </form>
+            <form class="col-md-auto" method="post" id="add-author">
+                <select class="select" required size="3" name="authorId" id="authorsIds">
+                </select>
+                <input class="btn" type="submit" value="Add author"/>
+            </form>
+            <form class="col-md-auto" method="post" id="add-genre">
+                <select class="select" required size="3" name="genre" id="genres">
+                </select>
+                <input class="btn" type="submit" value="Add genre"/>
+            </form>
+            <form class="col-md-auto" method="post" id="add-comment">
+                <div><textarea required name="comment" rows="3" placeholder="comment..." id="comment-text"></textarea></div>
+                <input class="btn" type="submit" value="Add comment"/>
+            </form>
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+
+</html>

@@ -1,5 +1,6 @@
 package ru.otus.springframework.library.books;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -62,12 +63,14 @@ public class Book {
         return authors;
     }
 
+    @JsonIgnore
     public String getAuthorString() {
         return of(sortedAuthors())
                 .map(Author::displayName)
                 .joining(", ");
     }
 
+    @JsonIgnore
     public String getGenreString() {
         return of(sortedGenres())
                 .map(Genre::getName).joining(", ");

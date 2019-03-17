@@ -1,4 +1,4 @@
 spring:
   shell.interactive.enabled: "false"
   thymeleaf.cache: "false"
-  thymeleaf.prefix: "classpath:/templates-mvc/"
+  thymeleaf.prefix: "classpath:/templates-rest/"
