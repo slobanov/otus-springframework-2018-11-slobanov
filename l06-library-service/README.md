@@ -55,7 +55,7 @@ For `postgres` and `h2` it is possible to switch between DAO providers (using re
 * to use hand-written JPA via Hibernate set ENV parameter `LIBRARY_DAO_PROVIDER=jpa`,
 * to use plain old JDBC set parameter ENV `LIBRARY_DAO_PROVIDER=jdbc`
 
-REST API can by disabled by setting by switching profile from `rest` to `mvc` - 
+REST API can by disabled by changing profile from `rest` to `mvc` - 
 this way web content will be generated using only [Thymeleaf](https://www.thymeleaf.org/).
 As usual, there is corresponding ENV `UI` in docker image:
 ```bash
