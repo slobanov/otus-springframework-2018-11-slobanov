@@ -55,7 +55,7 @@ class BookRestControllerTest {
 
         when(bookService.all()).thenReturn(books);
 
-        var booksRequest = get("/api/v2/books");
+        var booksRequest = get("/api/v2/book");
         booksRequest.then().statusCode(200);
         verify(bookService).all();
 
@@ -100,7 +100,7 @@ class BookRestControllerTest {
                 .queryParam("title", title)
                 .queryParam("authorIds", authorIds)
                 .queryParam("genres", genres)
-                .post("/api/v2/book/add");
+                .post("/api/v2/book");
 
         addBookRequest.then().statusCode(201);
         assertThat(addBookRequest.as(Book.class), equalTo(book));
@@ -128,7 +128,7 @@ class BookRestControllerTest {
 
         var addAuthorRequest = with()
                 .queryParam("authorId", authorId)
-                .post("api/v2/book/" + isbn + "/addAuthor");
+                .post("api/v2/book/" + isbn + "/authors");
 
         addAuthorRequest.then().statusCode(200);
         addAuthorRequest.as(Book.class);
@@ -144,7 +144,7 @@ class BookRestControllerTest {
 
         var addAuthorRequest = with()
                 .queryParam("genre", genre)
-                .post("api/v2/book/" + isbn + "/addGenre");
+                .post("api/v2/book/" + isbn + "/genres");
 
         addAuthorRequest.then().statusCode(200);
         addAuthorRequest.as(Book.class);
@@ -160,7 +160,7 @@ class BookRestControllerTest {
 
         var addAuthorRequest = with()
                 .queryParam("comment", comment)
-                .post("api/v2/book/" + isbn + "/addComment");
+                .post("api/v2/book/" + isbn + "/comments");
 
         addAuthorRequest.then().statusCode(200);
         addAuthorRequest.as(Book.class);

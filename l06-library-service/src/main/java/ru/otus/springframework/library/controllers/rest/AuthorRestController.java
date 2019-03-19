@@ -21,13 +21,13 @@ public class AuthorRestController {
     private final AuthorService authorService;
     private final BookService bookService;
 
-    @GetMapping("/api/v2/authors")
+    @GetMapping("/api/v2/author")
     public List<Author> all() {
         return authorService.all();
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/api/v2/author/add")
+    @PostMapping("/api/v2/author")
     public Author addAuthor(
             @RequestParam String firstName,
             @RequestParam String lastName

@@ -1,7 +1,7 @@
 window.onload = () => {
-    $.get("/api/v2/books").done(display_books);
-    $.get("/api/v2/authors").done(display_author_options);
-    $.get("/api/v2/genres").done(display_genre_options);
+    $.get("/api/v2/book").done(display_books);
+    $.get("/api/v2/author").done(display_author_options);
+    $.get("/api/v2/genre").done(display_genre_options);
 
     [checkAuthors, checkGenres].map(f => $("form#add-book-form").submit(f));
     $("form#add-book-form").attr("action", "javascript:add_new_book()");
@@ -21,7 +21,7 @@ add_new_book = (q) => {
 
     $.ajax({
         type: "POST",
-        url: "/api/v2/book/add",
+        url: "/api/v2/book",
         traditional: true,
         data: {
             "isbn": isbn,

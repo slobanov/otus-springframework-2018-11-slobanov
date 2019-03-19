@@ -55,7 +55,7 @@ class AuthorRestControllerTest {
     @MethodSource("authorsProvider")
     void all(List<Author> authors) {
         when(authorService.all()).thenReturn(authors);
-        var authorsRequest = get("/api/v2/authors");
+        var authorsRequest = get("/api/v2/author");
         authorsRequest.then().statusCode(200);
         var responseAuthors = authorsRequest.as(Author[].class);
         assertThat(asList(responseAuthors), equalTo(authors));
@@ -81,7 +81,7 @@ class AuthorRestControllerTest {
         var addAuthorRequest = with()
                 .queryParam("firstName", firstName)
                 .queryParam("lastName", lastName)
-                .post("/api/v2/author/add");
+                .post("/api/v2/author");
 
         addAuthorRequest.then().statusCode(201);
         assertThat(addAuthorRequest.as(Author.class), equalTo(author));

@@ -20,7 +20,7 @@ public class BookRestController {
     private final BookService bookService;
     private final CommentService commentService;
 
-    @GetMapping("/api/v2/books")
+    @GetMapping("/api/v2/book")
     public List<Book> all() {
         return bookService.all();
     }
@@ -31,7 +31,7 @@ public class BookRestController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/api/v2/book/add")
+    @PostMapping("/api/v2/book")
     public Book addBook(
             @RequestParam String isbn,
             @RequestParam String title,
@@ -46,17 +46,17 @@ public class BookRestController {
         return bookService.removeBook(isbn);
     }
 
-    @PostMapping("/api/v2/book/{isbn}/addAuthor")
+    @PostMapping("/api/v2/book/{isbn}/authors")
     public Book addAuthor(@PathVariable String isbn, @RequestParam Long authorId) {
         return bookService.addAuthor(isbn, authorId);
     }
 
-    @PostMapping("/api/v2/book/{isbn}/addGenre")
+    @PostMapping("/api/v2/book/{isbn}/genres")
     public Book addGenre(@PathVariable String isbn, @RequestParam String genre) {
         return bookService.addGenre(isbn, genre);
     }
 
-    @PostMapping("/api/v2/book/{isbn}/addComment")
+    @PostMapping("/api/v2/book/{isbn}/comments")
     public Book addComment(@PathVariable String isbn, @RequestParam String comment) {
         commentService.newComment(isbn, comment);
         return bookService.withIsbn(isbn).orElseThrow(NotFoundException::new);

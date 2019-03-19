@@ -49,7 +49,7 @@ class GenreRestControllerTest {
         var genres = List.of(new Genre("1"), new Genre("2"));
         when(genreService.all()).thenReturn(genres);
 
-        var genresRequest =  get("/api/v2/genres");
+        var genresRequest =  get("/api/v2/genre");
         genresRequest.then().statusCode(200);
         var responseAuthors = genresRequest.as(Genre[].class);
         assertThat(asList(responseAuthors), equalTo(genres));
@@ -63,7 +63,7 @@ class GenreRestControllerTest {
 
         var addGenreRequest = with()
                 .queryParam("genre", genre)
-                .post("/api/v2/genre/add");
+                .post("/api/v2/genre");
 
         addGenreRequest.then().statusCode(201);
         verify(genreService).newGenre(genre);

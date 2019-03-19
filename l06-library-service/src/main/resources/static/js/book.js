@@ -64,14 +64,14 @@ remove_book = () => {
 };
 
 display_suitable_author_options = (book) => {
-    $.get(`/api/v2/authors`).done(authors => {
+    $.get(`/api/v2/author`).done(authors => {
         var bookAuthorIds = book.authors.map(a => a.id);
         display_author_options(authors.filter(a => bookAuthorIds.indexOf(a.id) === -1));
     });
 };
 
 display_suitable_genre_options = (book) => {
-    $.get(`/api/v2/genres`).done(genres => {
+    $.get(`/api/v2/genre`).done(genres => {
         var bookGenres = book.genres.map(a => a.name);
         display_genre_options(genres.filter(g => bookGenres.indexOf(g.name) === -1));
     });
@@ -80,7 +80,7 @@ display_suitable_genre_options = (book) => {
 add_author = () => {
     var authorId = $("select#authorsIds option:selected").val();
     $.post(
-        `/api/v2/book/${context_book.isbn}/addAuthor`,
+        `/api/v2/book/${context_book.isbn}/authors`,
         { "authorId": authorId },
         (book) => {
             context_book = book;
@@ -94,7 +94,7 @@ add_author = () => {
 add_genre = () => {
     var genre = $("select#genres option:selected").val();
     $.post(
-        `/api/v2/book/${context_book.isbn}/addGenre`,
+        `/api/v2/book/${context_book.isbn}/genres`,
         { "genre": genre },
         (book) => {
             context_book = book;
@@ -108,7 +108,7 @@ add_genre = () => {
 add_comment = () => {
     var comment_text = $("textarea#comment-text").val();
     $.post(
-        `/api/v2/book/${context_book.isbn}/addComment`,
+        `/api/v2/book/${context_book.isbn}/comments`,
         { "comment": comment_text },
         (book) => {
             context_book = book;

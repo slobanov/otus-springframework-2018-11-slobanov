@@ -1,5 +1,5 @@
 window.onload = () => {
-    $.get("/api/v2/authors").done(display_authors);
+    $.get("/api/v2/author").done(display_authors);
 
     $("form#add-author-form").attr("action", "javascript:add_new_author()");
 };
@@ -25,7 +25,7 @@ add_new_author = () => {
     var last_name = form_input_value("lastName");
 
     $.post(
-        "/api/v2/author/add",
+        "/api/v2/author",
         {
             "firstName": first_name,
             "lastName": last_name

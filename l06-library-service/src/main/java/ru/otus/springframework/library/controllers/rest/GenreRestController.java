@@ -20,13 +20,13 @@ public class GenreRestController {
     private final GenreService genreService;
     private final BookService bookService;
 
-    @GetMapping("/api/v2/genres")
+    @GetMapping("/api/v2/genre")
     public List<Genre> all() {
         return genreService.all();
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/api/v2/genre/add")
+    @PostMapping("/api/v2/genre")
     public Genre addGenre(@RequestParam String genre) {
         return genreService.newGenre(genre);
     }
