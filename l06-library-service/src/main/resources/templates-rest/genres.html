@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/flat-ui/2.3.0/css/flat-ui.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/style.css"/>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/js/common.js"></script>
+    <script src="/js/genres.js"></script>
+</head>
+
+<body>
+
+<header>
+    <nav class="navbar navbar-expand-lg sticky" role="navigation">
+        <a class="navbar-brand" href="/books">Library</a>
+        <ul class="nav navbar-nav mr-auto btn-group">
+            <li><a class="inactive" href="/books">Books</a></li>
+            <li><a class="inactive" href="/authors">Authors</a></li>
+            <li><a href="/genres">Genres</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main class="container">
+
+    <table>
+        <thead>
+            <tr>
+                <th>Genre</th>
+            </tr>
+        </thead>
+        <tbody id="genres">
+        </tbody>
+    </table>
+
+</main>
+
+<section id="new-genre-form" class="container">
+    <div class="row">
+        <form class="col-md-auto" method="post" id="add-genre-form">
+            <p><input type="text" name="genre" required="required" placeholder="Genre"/></p>
+            <p><input class="btn" type="submit" value="Add new genre"/></p>
+        </form>
+    </div>
+</section>
+
+</body>
+
+</html>

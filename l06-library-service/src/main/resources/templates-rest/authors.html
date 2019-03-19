@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/flat-ui/2.3.0/css/flat-ui.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/style.css"/>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/js/authors.js"></script>
+</head>
+
+<body>
+
+<header>
+    <nav class="navbar navbar-expand-lg sticky" role="navigation">
+        <a class="navbar-brand" href="/books">Library</a>
+        <ul class="nav navbar-nav mr-auto btn-group">
+            <li><a class="inactive" href="/books">Books</a></li>
+            <li><a href="/authors">Authors</a></li>
+            <li><a class="inactive" href="/genres">Genres</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main class="container">
+    <table>
+        <thead>
+            <tr>
+                <th class="col-2">Id</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+            </tr>
+        </thead>
+        <tbody id="authors">
+        </tbody>
+    </table>
+</main>
+
+<section id="new-author-form" class="container">
+    <div class="row">
+        <form class="col-md-auto" id="add-author-form" method="post">
+            <div class="row">
+                <p class="col-md-auto"><input class="col-md-auto" type="text" name="firstName" required="required" placeholder="First Name"/></p>
+                <p class="col-md-auto"><input type="text" name="lastName" required="required" placeholder="Last Name"/></p>
+            </div>
+            <input class="btn" type="submit" value="Add new author"/>
+        </form>
+    </div>
+</section>
+
+</body>
+
+</html>

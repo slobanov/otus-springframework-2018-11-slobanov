@@ -4,7 +4,7 @@ library:
 spring:
   profiles.active:
       - "mongodb"
-      - "mvc"
+      - "rest"
   banner.location: "classpath:/banner.txt"
   liquibase:
     change-log: "classpath:db/changelog/db.changelog-master.xml"

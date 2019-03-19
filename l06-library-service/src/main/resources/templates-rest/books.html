@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/flat-ui/2.3.0/css/flat-ui.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/style.css"/>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/js/common.js"></script>
+    <script src="/js/books.js"></script>
+</head>
+
+<body>
+
+<header>
+    <nav class="navbar navbar-expand-lg sticky" role="navigation">
+        <a class="navbar-brand" href="/books">Library</a>
+        <ul class="nav navbar-nav mr-auto btn-group">
+            <li><a href="/books">Books</a></li>
+            <li><a class="inactive" href="/authors">Authors</a></li>
+            <li><a class="inactive" href="/genres">Genres</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main class="container">
+    <table>
+        <thead>
+            <tr>
+                <th>ISBN</th>
+                <th>Title</th>
+                <th>Authors</th>
+                <th>Genres</th>
+            </tr>
+        </thead>
+        <tbody id="books">
+        </tbody>
+    </table>
+</main>
+
+<section id="new-book-form" class="container">
+    <div class="row">
+        <form class="col-md-auto" id="add-book-form" method="post">
+            <div class="row">
+                <p class="col"><input type="text" name="isbn" required="required" placeholder="ISBN"/></p>
+                <p class="col"><input type="text" name="title" required="required" placeholder="Title"/></p>
+                <div class="col select">
+                    <select multiple size="3" name="authorIds" id="authorsIds">
+                    </select>
+                </div>
+                <div class="col select">
+                    <select multiple size="3" name="genres" id="genres">
+                    </select>
+                </div>
+            </div>
+            <input class="btn" type="submit" value="Add new book"/>
+        </form>
+    </div>
+</section>
+
+</body>
+
+</html>
