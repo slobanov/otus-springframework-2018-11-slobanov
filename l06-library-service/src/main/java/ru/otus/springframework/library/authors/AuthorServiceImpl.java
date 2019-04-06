@@ -1,7 +1,9 @@
 package ru.otus.springframework.library.authors;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Service;
+import ru.otus.springframework.library.authors.flux.AuthorServiceFlux;
 import ru.otus.springframework.library.dao.AuthorDAO;
 
 import java.util.List;
@@ -11,6 +13,7 @@ import static java.lang.String.format;
 
 @Service
 @RequiredArgsConstructor
+@ConditionalOnMissingBean(AuthorServiceFlux.class)
 class AuthorServiceImpl implements AuthorService {
 
     private final AuthorDAO authorDAO;

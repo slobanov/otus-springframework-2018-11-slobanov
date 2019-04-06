@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.otus.springframework.library.books.Book;
 import ru.otus.springframework.library.books.BookService;
+import ru.otus.springframework.library.comments.Comment;
 import ru.otus.springframework.library.comments.CommentService;
 import ru.otus.springframework.library.controllers.mvc.NotFoundException;
 
@@ -60,6 +61,11 @@ public class BookRestController {
     public Book addComment(@PathVariable String isbn, @RequestParam String comment) {
         commentService.newComment(isbn, comment);
         return bookService.withIsbn(isbn).orElseThrow(NotFoundException::new);
+    }
+
+    @GetMapping("/api/v2/book/{isbn}/comments")
+    public List<Comment> comments(@PathVariable String isbn) {
+        return commentService.commentsFor(isbn);
     }
 
 }

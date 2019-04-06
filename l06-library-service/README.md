@@ -14,7 +14,9 @@ Then, run `$ java -jar target/l06-library-service.jar` to start the app.
  * Or, `docker-compose up -d` - there is ready-to-go [docker-compose.yml](docker-compose.yml).
 
 __NB__: By default, library app runs on 8080 port and uses [MongoDB](https://www.mongodb.com/) for data storage 
-and expects to find one at `localhost:27017`. There is REST API with [Swagger](https://swagger.io/) assets
+and expects to find one at `localhost:27017`. In default profile `flux` app works in a reactive way. Reactive approach
+can be disabled by switching profile from `flux` to `rest`.
+For `rest` profile there is REST API with [Swagger](https://swagger.io/) assets
 (which means /swagger-ui.html and /v2/api-docs are available).
 
 For data storage app also supports [PostgreSQL](https://www.postgresql.org/) and [in-memory H2 DB](http://www.h2database.com); 
@@ -55,7 +57,7 @@ For `postgres` and `h2` it is possible to switch between DAO providers (using re
 * to use hand-written JPA via Hibernate set ENV parameter `LIBRARY_DAO_PROVIDER=jpa`,
 * to use plain old JDBC set parameter ENV `LIBRARY_DAO_PROVIDER=jdbc`
 
-REST API can by disabled by changing profile from `rest` to `mvc` - 
+REST API can by disabled by changing profile from `flux` to `mvc` - 
 this way web content will be generated using only [Thymeleaf](https://www.thymeleaf.org/).
 As usual, there is corresponding ENV `UI` in docker image:
 ```bash
@@ -65,7 +67,7 @@ $ docker run -it --rm --link=mongodb \
     otusspring201811slobanov/l06-library-service
 ```
 
-Also, application can be started with [Spring Shell](https://projects.spring.io/spring-shell/) interface by switching profile from `rest` to `shell`:
+Also, application can be started with [Spring Shell](https://projects.spring.io/spring-shell/) interface by switching profile from `flux` to `shell`:
 ```bash
 $ docker run -it --rm --link=mongodb \
     -e UI=shell \

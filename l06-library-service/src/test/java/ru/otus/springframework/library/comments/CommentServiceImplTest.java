@@ -49,6 +49,7 @@ class CommentServiceImplTest {
         assertThat(resultComments, contains(expectedComments.toArray()));
     }
 
+    @Test
     void commentsForNoBook() {
         when(bookDAO.findByIsbn(anyString())).thenReturn(Optional.empty());
         assertThat(commentService.commentsFor("213"), equalTo(Collections.emptyList()));

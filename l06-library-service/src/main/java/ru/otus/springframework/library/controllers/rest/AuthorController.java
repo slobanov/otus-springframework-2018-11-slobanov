@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
-@Profile("rest")
+@Profile({"rest", "flux"})
 public class AuthorController {
 
     @GetMapping("/authors")

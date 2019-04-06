@@ -2,3 +2,4 @@ spring:
   shell.interactive.enabled: "false"
   thymeleaf.cache: "false"
   thymeleaf.prefix: "classpath:/templates-rest/"
+  main.web-application-type: "SERVLET"

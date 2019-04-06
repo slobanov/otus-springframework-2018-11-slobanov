@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @ChangeLog
 @Service
-@Profile("test-mongodb")
+@Profile({"test-mongodb", "test-reactive-mongodb"})
 public class LibraryMongodbTestChangelog {
 
     @ChangeSet(order = "001", id = "test-1.0", author = "s.lobanov")

@@ -42,7 +42,7 @@ display_genres = (book) => {
 display_comments = (book) => {
     var td_comments = $("td#comments");
     td_comments.empty();
-    $.get(`/api/v2/comments/${book.isbn}`).done(
+    $.get(`/api/v2/book/${book.isbn}/comments`).done(
         comments => td_comments.append(list_string(comments, comment_string))
     );
 };
