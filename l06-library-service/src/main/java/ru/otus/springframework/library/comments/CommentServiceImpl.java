@@ -2,7 +2,9 @@ package ru.otus.springframework.library.comments;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Service;
+import ru.otus.springframework.library.comments.flux.CommentServiceFlux;
 import ru.otus.springframework.library.dao.BookDAO;
 import ru.otus.springframework.library.dao.CommentDAO;
 
@@ -12,6 +14,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@ConditionalOnMissingBean(CommentServiceFlux.class)
 class CommentServiceImpl implements CommentService {
 
     private final BookDAO bookDAO;

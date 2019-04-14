@@ -10,11 +10,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>l06-library-service</artifactId>
-    <version>6.0.0</version>
+    <version>7.0.0</version>
 
     <properties>
         <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
         <rest-assured.version>3.2.0</rest-assured.version>
+        <mockito-junit-jupiter.version>2.23.4</mockito-junit-jupiter.version>
     </properties>
 
     <dependencies>
@@ -29,6 +30,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -57,6 +62,10 @@
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb-reactive</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-csv</artifactId>
         </dependency>
@@ -70,7 +79,7 @@
             <artifactId>springfox-swagger-ui</artifactId>
             <version>${springfox-swagger2.version}</version>
         </dependency>
-
+       
         <dependency>
             <groupId>de.flapdoodle.embed</groupId>
             <artifactId>de.flapdoodle.embed.mongo</artifactId>
@@ -85,7 +94,24 @@
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>spring-mock-mvc</artifactId>
-            <version>3.2.0</version>
+            <version>${rest-assured.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>spring-web-test-client</artifactId>
+            <version>${rest-assured.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito-junit-jupiter.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -112,7 +138,7 @@
                                     <descriptorRef>artifact</descriptorRef>
                                 </assembly>
                                 <cmd>java \
-                                    -Dspring.profiles.active="$UI, $DB" \
+                                    -Dspring.profiles.active="$DB, $UI" \
                                     \
                                     -Dlibrary.db.url=$DB_URL \
                                     -Dlibrary.db.username=$DB_USERNAME \
@@ -128,7 +154,7 @@
                                     <DB_USERNAME>user_name</DB_USERNAME>
                                     <DB_PASSWORD>db_password</DB_PASSWORD>
                                     <DB_NAME>library</DB_NAME>
-                                    <UI>rest</UI>
+                                    <UI>flux</UI>
                                 </env>
                             </build>
                         </image>

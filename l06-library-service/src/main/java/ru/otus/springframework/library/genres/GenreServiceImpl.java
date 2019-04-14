@@ -2,7 +2,9 @@ package ru.otus.springframework.library.genres;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Service;
+import ru.otus.springframework.library.authors.flux.AuthorServiceFlux;
 import ru.otus.springframework.library.dao.GenreDAO;
 
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.Optional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@ConditionalOnMissingBean(AuthorServiceFlux.class)
 class GenreServiceImpl implements GenreService {
 
     private final GenreDAO genreDAO;

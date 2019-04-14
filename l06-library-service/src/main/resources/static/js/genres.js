@@ -7,6 +7,13 @@ window.onload = () => {
 display_genres = (genres) => genres.forEach(display_genre);
 display_genre = (genre) => $("tbody#genres").append(genre_string(genre));
 
+genre_string = (genre) => `
+    <tr>
+        <td>
+            <a href="/genre/${genre.name}">${genre.name}</a>
+        </td>
+    </tr>
+                          `;
 add_new_genre = () => {
     $.post(
         `/api/v2/genre`,

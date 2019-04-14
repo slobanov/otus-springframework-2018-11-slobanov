@@ -15,11 +15,11 @@ public class MongoComment {
     private final @NonNull String text;
     private final @NonNull Date created;
 
-    Comment asComment(Book book) {
+    public Comment asComment(Book book) {
         return new Comment(id, book, text, created);
     }
 
-    static MongoComment fromComment(Comment comment) {
+    public static MongoComment fromComment(Comment comment) {
         return new MongoComment(comment.getId(), comment.getText(), comment.getCreated());
     }
 }

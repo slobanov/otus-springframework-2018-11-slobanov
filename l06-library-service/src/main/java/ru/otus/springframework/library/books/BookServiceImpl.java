@@ -3,9 +3,11 @@ package ru.otus.springframework.library.books;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import one.util.streamex.EntryStream;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.springframework.library.authors.Author;
+import ru.otus.springframework.library.books.flux.BookServiceFlux;
 import ru.otus.springframework.library.dao.AuthorDAO;
 import ru.otus.springframework.library.dao.BookDAO;
 import ru.otus.springframework.library.dao.GenreDAO;
@@ -18,6 +20,7 @@ import static one.util.streamex.StreamEx.of;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@ConditionalOnMissingBean(BookServiceFlux.class)
 class BookServiceImpl implements BookService {
 
     private final BookDAO bookDAO;

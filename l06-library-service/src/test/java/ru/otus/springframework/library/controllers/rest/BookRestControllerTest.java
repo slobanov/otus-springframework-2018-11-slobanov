@@ -14,8 +14,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.springframework.library.books.Book;
 import ru.otus.springframework.library.books.BookService;
+import ru.otus.springframework.library.comments.Comment;
 import ru.otus.springframework.library.comments.CommentService;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -89,7 +91,7 @@ class BookRestControllerTest {
     @Test
     void addBook() {
         var isbn = "123";
-        var title = "asdf";
+        var title = "Title";
         var authorIds = List.of(1L, 2L);
         var genres = List.of("a", "b");
         var book = dummyBook(isbn);
@@ -166,6 +168,31 @@ class BookRestControllerTest {
         addAuthorRequest.as(Book.class);
         verify(bookService).withIsbn(isbn);
         verify(commentService).newComment(isbn, comment);
+    }
+
+    @Test
+    void comments() {
+        var isbn = "qwe";
+        var comment = new Comment(
+                1L,
+                new Book(
+                        42L,
+                        isbn,
+                        "title",
+                        Set.of(),
+                        Set.of()
+                ),
+                "123",
+                new Date()
+        );
+        var comments = List.of(comment);
+        when(commentService.commentsFor(isbn)).thenReturn(comments);
+
+        var commentsRequest = get("/api/v2/book/" + isbn + "/comments");
+
+        commentsRequest.then().statusCode(200);
+        verify(commentService).commentsFor(isbn);
+        assertThat(asList(commentsRequest.as(Comment[].class)), equalTo(comments));
     }
 
     private static Book dummyBook(String isbn) {
