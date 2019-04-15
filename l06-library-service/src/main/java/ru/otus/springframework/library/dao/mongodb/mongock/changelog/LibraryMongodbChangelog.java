@@ -26,4 +26,9 @@ public class LibraryMongodbChangelog {
         );
     }
 
+    @ChangeSet(order = "002", id = "changelog-2.0", author = "s.lobanov")
+    public static void addUsers(MongoOperations mongoOps) {
+        MongoChangeLogUtils.addUsers("db/changelog/data/user.csv", mongoOps);
+    }
+
 }

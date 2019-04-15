@@ -10,12 +10,14 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.util.Pair;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import ru.otus.springframework.library.authors.Author;
 import ru.otus.springframework.library.books.Book;
 import ru.otus.springframework.library.dao.mongodb.BookComments;
 import ru.otus.springframework.library.dao.mongodb.MongoComment;
 import ru.otus.springframework.library.dao.mongodb.seq.SequenceRepository;
 import ru.otus.springframework.library.genres.Genre;
+import ru.otus.springframework.library.secutiry.MongodbUser;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -152,5 +154,18 @@ class MongoChangeLogUtils {
 
     private Long newId(MongoOperations mongoOps, String collectionName) {
         return new SequenceRepository(mongoOps).getNextSequence(collectionName);
+    }
+
+    void addUsers(String userFile, MongoOperations mongoOperations) {
+        var users = readFromCSV(
+                userFile,
+                MongodbUser.class,
+                u -> {},
+                "userName",
+                "password"
+        );
+        var passwordEncoder = new BCryptPasswordEncoder();
+        users.forEach(u -> u.setPassword(passwordEncoder.encode(u.getPassword())));
+        mongoOperations.insertAll(users);
     }
 }

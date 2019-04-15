@@ -8,6 +8,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.springframework.library.authors.Author;
@@ -30,8 +32,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(BookController.class)
-@ActiveProfiles("mvc")
+@ActiveProfiles({"mvc", "test-mongodb"})
 class BookControllerTest {
+
+    @MockBean
+    private UserDetailsService userDetailsService;
 
     @MockBean
     private BookService bookService;
@@ -49,6 +54,7 @@ class BookControllerTest {
     private MockMvc mvc;
 
     @Test
+    @WithMockUser(username = "test_user", password = "test_password")
     void all() throws Exception {
         var books = List.of(mock(Book.class), mock(Book.class));
         when(bookService.all()).thenReturn(books);
@@ -74,6 +80,7 @@ class BookControllerTest {
 
     @ParameterizedTest
     @MethodSource("bookProvider")
+    @WithMockUser(username = "test_user", password = "test_password")
     void book(Optional<Book> book, String isbn) throws Exception {
         when(bookService.withIsbn(isbn)).thenReturn(book);
 
@@ -103,6 +110,7 @@ class BookControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test_user", password = "test_password")
     void addBook() throws Exception {
         var isbn = "123";
         var title = "title1";
@@ -119,6 +127,7 @@ class BookControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test_user", password = "test_password")
     void delete() throws Exception {
         var isbn = "123";
         var modelAndView = mvc.perform(post("/book/" + isbn + "/delete"))
@@ -130,6 +139,7 @@ class BookControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test_user", password = "test_password")
     void addAuthor() throws Exception {
         var isbn = "123";
         var authorId = "1";
@@ -144,6 +154,7 @@ class BookControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test_user", password = "test_password")
     void addGenre() throws Exception {
         var isbn = "123";
         var genre = "genre";
@@ -158,6 +169,7 @@ class BookControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test_user", password = "test_password")
     void addComment() throws Exception {
         var isbn = "123";
         var comment = "comment";

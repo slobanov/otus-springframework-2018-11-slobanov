@@ -11,6 +11,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.springframework.library.authors.Author;
@@ -23,9 +25,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static io.restassured.module.mockmvc.RestAssuredMockMvc.delete;
-import static io.restassured.module.mockmvc.RestAssuredMockMvc.get;
-import static io.restassured.module.mockmvc.RestAssuredMockMvc.with;
+import static io.restassured.module.mockmvc.RestAssuredMockMvc.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -34,8 +34,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @WebMvcTest(AuthorRestController.class)
-@ActiveProfiles("rest")
+@ActiveProfiles({"rest", "test-mongodb"})
 class AuthorRestControllerTest {
+
+    @MockBean
+    private UserDetailsService userDetailsService;
 
     @MockBean
     private AuthorService authorService;
@@ -53,6 +56,7 @@ class AuthorRestControllerTest {
 
     @ParameterizedTest
     @MethodSource("authorsProvider")
+    @WithMockUser(username = "test_user", password = "test_password")
     void all(List<Author> authors) {
         when(authorService.all()).thenReturn(authors);
         var authorsRequest = get("/api/v2/author");
@@ -72,6 +76,7 @@ class AuthorRestControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test_user", password = "test_password")
     void addAuthor() {
         var firstName = "fName";
         var lastName = "lName";
@@ -90,6 +95,7 @@ class AuthorRestControllerTest {
 
     @ParameterizedTest
     @MethodSource("authorProvider")
+    @WithMockUser(username = "test_user", password = "test_password")
     void author(Long id, Optional<Author> author) {
         when(authorService.withId(id)).thenReturn(author);
         var authorRequest = get("/api/v2/author/" + id );
@@ -112,6 +118,7 @@ class AuthorRestControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test_user", password = "test_password")
     void deleteAuthor() {
         var id = 42L;
         var author = new Author(id, "fName", "lName");
@@ -125,6 +132,7 @@ class AuthorRestControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test_user", password = "test_password")
     void authorBooks() {
         var authorId = 42L;
         var book = new Book(1L, "123", "title", Set.of(), Set.of());

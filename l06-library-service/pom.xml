@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>l06-library-service</artifactId>
-    <version>7.0.0</version>
+    <version>8.0.0</version>
 
     <properties>
         <springfox-swagger2.version>2.9.2</springfox-swagger2.version>
@@ -79,6 +79,10 @@
             <artifactId>springfox-swagger-ui</artifactId>
             <version>${springfox-swagger2.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
        
         <dependency>
             <groupId>de.flapdoodle.embed</groupId>
@@ -113,6 +117,11 @@
             <artifactId>mockito-junit-jupiter</artifactId>
             <version>${mockito-junit-jupiter.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <version>${spring-security.version}</version>
         </dependency>
     </dependencies>
 
@@ -154,7 +163,7 @@
                                     <DB_USERNAME>user_name</DB_USERNAME>
                                     <DB_PASSWORD>db_password</DB_PASSWORD>
                                     <DB_NAME>library</DB_NAME>
-                                    <UI>flux</UI>
+                                    <UI>rest</UI>
                                 </env>
                             </build>
                         </image>
