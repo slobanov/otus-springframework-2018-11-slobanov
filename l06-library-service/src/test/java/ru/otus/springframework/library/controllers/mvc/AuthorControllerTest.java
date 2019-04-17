@@ -9,6 +9,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.springframework.library.authors.Author;
@@ -29,8 +31,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AuthorController.class)
-@ActiveProfiles("mvc")
+@ActiveProfiles({"mvc", "test-mongodb"})
 class AuthorControllerTest {
+
+    @MockBean
+    private UserDetailsService userDetailsService;
 
     @MockBean
     private AuthorService authorService;
@@ -42,6 +47,7 @@ class AuthorControllerTest {
     private MockMvc mvc;
 
     @Test
+    @WithMockUser(username = "test_user", password = "test_password")
     void all() throws Exception {
         var authors = List.of(mock(Author.class), mock(Author.class));
         when(authorService.all()).thenReturn(authors);
@@ -57,6 +63,7 @@ class AuthorControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test_user", password = "test_password")
     void addAuthor() throws Exception {
         var firstName = "fName";
         var lastName = "lName";
@@ -75,6 +82,7 @@ class AuthorControllerTest {
 
     @ParameterizedTest
     @MethodSource("authorProvider")
+    @WithMockUser(username = "test_user", password = "test_password")
     void author(Long authorId, Optional<Author> author) throws Exception {
         when(authorService.withId(authorId)).thenReturn(author);
         var books = List.of(mock(Book.class));
@@ -103,6 +111,7 @@ class AuthorControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test_user", password = "test_password")
     void delete() throws Exception {
         var authorId = 42L;
         var modelAndView = mvc.perform(post("/author/" + authorId + "/delete"))

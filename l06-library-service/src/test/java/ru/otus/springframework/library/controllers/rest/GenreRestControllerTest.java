@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.springframework.library.books.Book;
@@ -17,9 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static io.restassured.module.mockmvc.RestAssuredMockMvc.delete;
-import static io.restassured.module.mockmvc.RestAssuredMockMvc.get;
-import static io.restassured.module.mockmvc.RestAssuredMockMvc.with;
+import static io.restassured.module.mockmvc.RestAssuredMockMvc.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -27,8 +27,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @WebMvcTest(GenreRestController.class)
-@ActiveProfiles("rest")
+@ActiveProfiles({"rest", "test-mongodb"})
 class GenreRestControllerTest {
+
+    @MockBean
+    private UserDetailsService userDetailsService;
 
     @MockBean
     private GenreService genreService;
@@ -45,6 +48,7 @@ class GenreRestControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test_user", password = "test_password")
     void all() {
         var genres = List.of(new Genre("1"), new Genre("2"));
         when(genreService.all()).thenReturn(genres);
@@ -56,6 +60,7 @@ class GenreRestControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test_user", password = "test_password")
     void addGenre() {
         var genre = "123";
         var genreObj = new Genre(genre);
@@ -71,6 +76,7 @@ class GenreRestControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test_user", password = "test_password")
     void deleteGenre() {
         var genre = "123";
         var genreObj = new Genre(genre);
@@ -84,6 +90,7 @@ class GenreRestControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test_user", password = "test_password")
     void booksOfGenre() {
         var genre = "123";
         var book = new Book(1L, "123", "title", Set.of(), Set.of());

@@ -112,3 +112,22 @@ textarea {
 .fui-cross-circle {
   opacity: 0.5;
 }
+
+form.form-signin {
+  margin: auto;
+}
+
+input.form-control:focus {
+  border: 2px solid grey;
+}
+
+.error-bar {
+  border: 1px solid grey;
+  border-radius: 7px;
+  padding: 15px;
+  margin: auto;
+  margin-bottom: 10px;
+  color: #86181d;
+  background-color: #ffdce0;
+}
+

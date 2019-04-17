@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.springframework.library.books.Book;
@@ -23,8 +25,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(GenreController.class)
-@ActiveProfiles("mvc")
+@ActiveProfiles({"mvc", "test-mongodb"})
 class GenreControllerTest {
+
+    @MockBean
+    private UserDetailsService userDetailsService;
 
     @MockBean
     private GenreService genreService;
@@ -36,6 +41,7 @@ class GenreControllerTest {
     private MockMvc mvc;
 
     @Test
+    @WithMockUser(username = "test_user", password = "test_password")
     void all() throws Exception {
         var genres = List.of(mock(Genre.class), mock(Genre.class));
         when(genreService.all()).thenReturn(genres);
@@ -51,6 +57,7 @@ class GenreControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test_user", password = "test_password")
     void genre() throws Exception {
         var genre = "gew 1";
         var books = List.of(mock(Book.class));
@@ -67,6 +74,7 @@ class GenreControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test_user", password = "test_password")
     void addGenre() throws Exception {
         var genre = "asd 123";
         var genreObj = new Genre(1L, genre);
@@ -82,6 +90,7 @@ class GenreControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test_user", password = "test_password")
     void delete() throws Exception {
         var genre = "asf 1";
         var modelAndView = mvc.perform(post("/genre/" + genre + "/delete"))

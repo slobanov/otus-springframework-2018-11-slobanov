@@ -10,6 +10,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.springframework.library.books.Book;
@@ -23,9 +25,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static io.restassured.module.mockmvc.RestAssuredMockMvc.delete;
-import static io.restassured.module.mockmvc.RestAssuredMockMvc.get;
-import static io.restassured.module.mockmvc.RestAssuredMockMvc.with;
+import static io.restassured.module.mockmvc.RestAssuredMockMvc.*;
 import static org.assertj.core.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -33,8 +33,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @WebMvcTest(BookRestController.class)
-@ActiveProfiles("rest")
+@ActiveProfiles({"rest", "test-mongodb"})
 class BookRestControllerTest {
+
+    @MockBean
+    private UserDetailsService userDetailsService;
 
     @MockBean
     private BookService bookService;
@@ -51,6 +54,7 @@ class BookRestControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test_user", password = "test_password")
     void all() {
         var book = new Book(42L, "123", "title", Set.of(), Set.of());
         var books = List.of(book);
@@ -66,6 +70,7 @@ class BookRestControllerTest {
 
     @ParameterizedTest
     @MethodSource("bookProvider")
+    @WithMockUser(username = "test_user", password = "test_password")
     void book(String isbn, Optional<Book> book) {
         when(bookService.withIsbn(isbn)).thenReturn(book);
 
@@ -89,6 +94,7 @@ class BookRestControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test_user", password = "test_password")
     void addBook() {
         var isbn = "123";
         var title = "Title";
@@ -110,6 +116,7 @@ class BookRestControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test_user", password = "test_password")
     void deleteBook() {
         var isbn = "123";
         var book = dummyBook(isbn);
@@ -122,6 +129,7 @@ class BookRestControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test_user", password = "test_password")
     void addAuthor() {
         var isbn = "123";
         var book = dummyBook(isbn);
@@ -138,6 +146,7 @@ class BookRestControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test_user", password = "test_password")
     void addGenre() {
         var isbn = "123";
         var book = dummyBook(isbn);
@@ -154,6 +163,7 @@ class BookRestControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test_user", password = "test_password")
     void addComment() {
         var isbn = "123";
         var book = dummyBook(isbn);
@@ -171,6 +181,7 @@ class BookRestControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "test_user", password = "test_password")
     void comments() {
         var isbn = "qwe";
         var comment = new Comment(
