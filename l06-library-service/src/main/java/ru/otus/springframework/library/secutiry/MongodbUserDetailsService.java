@@ -9,8 +9,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-
 @Profile({"rest", "mvc"})
 @ConditionalOnProperty(name = "library.dao.provider", havingValue = "spring-mongodb-jpa")
 @Service
@@ -25,7 +23,8 @@ class MongodbUserDetailsService implements UserDetailsService {
                 .map(u -> User.builder()
                         .username(u.getUserName())
                         .password(u.getPassword())
-                        .authorities(Collections.emptyList()).build())
+                        .roles(u.getRoleString().split(","))
+                        .build())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 }

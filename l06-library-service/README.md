@@ -17,11 +17,18 @@ __NB__: By default, library app runs on 8080 port and uses [MongoDB](https://www
 and expects to find one at `localhost:27017`. For default `rest` profile there is REST API with [Swagger](https://swagger.io/) assets
 (which means /swagger-ui.html and /v2/api-docs are available).
 
-All library endpoints require authentication (if using `rest` or `mvc` with `mongodb`). There is a predefined user: 
-```bash
-login: user
-password: password123
-```
+All library endpoints require authentication (if using `rest` or `mvc` with `mongodb`). There are some predefined users: 
+
+| login       | password    | authorities          |
+|-------------|-------------|----------------------|
+| user        | password123 | all endpoints        |
+| book_user   | book        | all book endpoints   | 
+| author_user | author      | all author endpoints |
+| genre_user  | genre       | all genre endpoints  |
+
+Plus, these are accessible for every authenticated user: <br>
+`GET /book` <br> `GET /api/v2/book` <br> `GET /author` <br> `GET /api/v2/author` <br> `GET /genre` <br> `GET /api/v2/genre`
+
 For data storage app also supports [PostgreSQL](https://www.postgresql.org/) and [in-memory H2 DB](http://www.h2database.com); 
 to enable it replace `mongodb` in `spring.profiles.active` property to `postgres`/`h2` and
 `library.db.url`, `library.db.username` and `library.db.password` to database credentials.

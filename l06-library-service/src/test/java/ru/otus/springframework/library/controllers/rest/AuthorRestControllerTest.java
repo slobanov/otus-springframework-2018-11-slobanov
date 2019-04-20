@@ -27,6 +27,7 @@ import java.util.stream.Stream;
 
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.*;
 import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.params.provider.Arguments.of;
@@ -65,6 +66,13 @@ class AuthorRestControllerTest {
         assertThat(asList(responseAuthors), equalTo(authors));
     }
 
+    @Test
+    void all302() {
+        get("/api/v2/author").then()
+                .statusCode(302)
+                .header("Location", is("http://localhost/login.html"));
+    }
+
     private static Stream<Arguments> authorsProvider() {
         return StreamEx.of(
                 of(List.of(new Author(1L, "fName1", "lName1"))),
@@ -76,7 +84,7 @@ class AuthorRestControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "test_user", password = "test_password")
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_AUTHOR")
     void addAuthor() {
         var firstName = "fName";
         var lastName = "lName";
@@ -93,9 +101,36 @@ class AuthorRestControllerTest {
         verify(authorService).newAuthor(firstName, lastName);
     }
 
+    @Test
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_OTHER")
+    void addAuthor403() {
+        var firstName = "fName";
+        var lastName = "lName";
+
+        with()
+                .queryParam("firstName", firstName)
+                .queryParam("lastName", lastName)
+                .post("/api/v2/author")
+                .then().statusCode(403);
+    }
+
+    @Test
+    void addAuthor302() {
+        var firstName = "fName";
+        var lastName = "lName";
+
+        with()
+                .queryParam("firstName", firstName)
+                .queryParam("lastName", lastName)
+                .post("/api/v2/author")
+                .then()
+                .statusCode(302)
+                .header("Location", is("http://localhost/login.html"));
+    }
+
     @ParameterizedTest
     @MethodSource("authorProvider")
-    @WithMockUser(username = "test_user", password = "test_password")
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_AUTHOR")
     void author(Long id, Optional<Author> author) {
         when(authorService.withId(id)).thenReturn(author);
         var authorRequest = get("/api/v2/author/" + id );
@@ -108,6 +143,21 @@ class AuthorRestControllerTest {
         }
     }
 
+    @Test
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_OTHER")
+    void author403() {
+        get("/api/v2/author/123")
+                .then().statusCode(403);
+    }
+
+    @Test
+    void author302() {
+        get("/api/v2/author/123")
+                .then()
+                .statusCode(302)
+                .header("Location", is("http://localhost/login.html"));
+    }
+
     private static Stream<Arguments> authorProvider() {
         return EntryStream.of(
                 1L, new Author(1L, "fName1", "lName1"),
@@ -118,7 +168,7 @@ class AuthorRestControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "test_user", password = "test_password")
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_AUTHOR")
     void deleteAuthor() {
         var id = 42L;
         var author = new Author(id, "fName", "lName");
@@ -132,7 +182,22 @@ class AuthorRestControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "test_user", password = "test_password")
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_OTHER")
+    void deleteAuthor403() {
+        delete("/api/v2/author/42")
+                .then().statusCode(403);
+    }
+
+    @Test
+    void deleteAuthor302() {
+        delete("/api/v2/author/42")
+                .then()
+                .statusCode(302)
+                .header("Location", is("http://localhost/login.html"));
+    }
+
+    @Test
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_AUTHOR")
     void authorBooks() {
         var authorId = 42L;
         var book = new Book(1L, "123", "title", Set.of(), Set.of());
@@ -143,5 +208,22 @@ class AuthorRestControllerTest {
         authorBooksRequest.then().statusCode(200);
         assertThat(asList(authorBooksRequest.as(Book[].class)), equalTo(List.of(book)));
         verify(bookService).writtenBy(authorId);
+    }
+
+    @Test
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_OTHER")
+    void authorBooks403() {
+        var authorId = 42L;
+        get("/api/v2/author/" + authorId + "/books")
+                .then().statusCode(403);
+    }
+
+    @Test
+    void authorBooks302() {
+        var authorId = 42L;
+        get("/api/v2/author/" + authorId + "/books")
+                .then()
+                .statusCode(302)
+                .header("Location", is("http://localhost/login.html"));
     }
 }

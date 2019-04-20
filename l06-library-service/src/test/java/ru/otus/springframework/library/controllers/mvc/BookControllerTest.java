@@ -29,6 +29,7 @@ import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(BookController.class)
@@ -78,9 +79,16 @@ class BookControllerTest {
         assertThat(modelAndView.getModel(), hasEntry("genres", genres));
     }
 
+    @Test
+    void all302() throws Exception {
+        mvc.perform(get("/books"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("http://localhost/login.html"));
+    }
+
     @ParameterizedTest
     @MethodSource("bookProvider")
-    @WithMockUser(username = "test_user", password = "test_password")
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_BOOK")
     void book(Optional<Book> book, String isbn) throws Exception {
         when(bookService.withIsbn(isbn)).thenReturn(book);
 
@@ -102,6 +110,19 @@ class BookControllerTest {
         }
     }
 
+    @Test
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "OTHER_ROLE")
+    void book403() throws Exception {
+        mvc.perform(get("/book/123")).andExpect(status().isForbidden());
+    }
+
+    @Test
+    void book302() throws Exception {
+        mvc.perform(get("/book/123"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("http://localhost/login.html"));
+    }
+
     private static Stream<Arguments> bookProvider() {
         return StreamEx.of(
                 Arguments.of(Optional.empty(), "123"),
@@ -110,7 +131,7 @@ class BookControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "test_user", password = "test_password")
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_BOOK")
     void addBook() throws Exception {
         var isbn = "123";
         var title = "title1";
@@ -127,7 +148,33 @@ class BookControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "test_user", password = "test_password")
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_OTHER")
+    void addBook403() throws Exception {
+        var isbn = "123";
+        var title = "title1";
+        mvc.perform(post("/book/add")
+                .param("isbn", isbn)
+                .param("title", title)
+                .param("authorIds", "1", "2")
+                .param("genres", "g1", "g2")
+        ).andExpect(status().isForbidden());
+    }
+
+    @Test
+    void addBook302() throws Exception {
+        var isbn = "123";
+        var title = "title1";
+        mvc.perform(post("/book/add")
+                .param("isbn", isbn)
+                .param("title", title)
+                .param("authorIds", "1", "2")
+                .param("genres", "g1", "g2")
+        ).andExpect(status().is3xxRedirection())
+         .andExpect(redirectedUrl("http://localhost/login.html"));
+    }
+
+    @Test
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_BOOK")
     void delete() throws Exception {
         var isbn = "123";
         var modelAndView = mvc.perform(post("/book/" + isbn + "/delete"))
@@ -139,7 +186,23 @@ class BookControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "test_user", password = "test_password")
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_OTHER")
+    void delete403() throws Exception {
+        var isbn = "123";
+        mvc.perform(post("/book/" + isbn + "/delete"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void delete302() throws Exception {
+        var isbn = "123";
+        mvc.perform(post("/book/" + isbn + "/delete"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("http://localhost/login.html"));
+    }
+
+    @Test
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_BOOK")
     void addAuthor() throws Exception {
         var isbn = "123";
         var authorId = "1";
@@ -154,7 +217,29 @@ class BookControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "test_user", password = "test_password")
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_OTHER")
+    void addAuthor403() throws Exception {
+        var isbn = "123";
+        var authorId = "1";
+
+       mvc.perform(post("/book/" + isbn + "/addAuthor")
+                .param("authorId", authorId)
+        ).andExpect(status().isForbidden());
+    }
+
+    @Test
+    void addAuthor302() throws Exception {
+        var isbn = "123";
+        var authorId = "1";
+
+        mvc.perform(post("/book/" + isbn + "/addAuthor")
+                .param("authorId", authorId)
+        ).andExpect(status().is3xxRedirection())
+         .andExpect(redirectedUrl("http://localhost/login.html"));
+    }
+
+    @Test
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_BOOK")
     void addGenre() throws Exception {
         var isbn = "123";
         var genre = "genre";
@@ -169,7 +254,29 @@ class BookControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "test_user", password = "test_password")
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_OTHER")
+    void addGenre403() throws Exception {
+        var isbn = "123";
+        var genre = "genre";
+
+        mvc.perform(post("/book/" + isbn + "/addGenre")
+                .param("genre", genre)
+        ).andExpect(status().isForbidden());
+    }
+
+    @Test
+    void addGenre302() throws Exception {
+        var isbn = "123";
+        var genre = "genre";
+
+        mvc.perform(post("/book/" + isbn + "/addGenre")
+                .param("genre", genre)
+        ).andExpect(status().is3xxRedirection())
+                .andReturn().getModelAndView();
+    }
+
+    @Test
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_BOOK")
     void addComment() throws Exception {
         var isbn = "123";
         var comment = "comment";
@@ -181,5 +288,28 @@ class BookControllerTest {
 
         verify(commentService).newComment(isbn, comment);
         assertThat(modelAndView.getViewName(), equalTo("redirect:/book/" + isbn));
+    }
+
+    @Test
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_OTHER")
+    void addComment403() throws Exception {
+        var isbn = "123";
+        var comment = "comment";
+
+        mvc.perform(post("/book/" + isbn + "/addComment")
+                .param("comment", comment)
+        ).andExpect(status().isForbidden());
+    }
+
+    @Test
+    void addComment302() throws Exception {
+        var isbn = "123";
+        var comment = "comment";
+
+        mvc.perform(post("/book/" + isbn + "/addComment")
+                .param("comment", comment)
+        ).andExpect(status().is3xxRedirection())
+         .andExpect(redirectedUrl("http://localhost/login.html"));
+
     }
 }

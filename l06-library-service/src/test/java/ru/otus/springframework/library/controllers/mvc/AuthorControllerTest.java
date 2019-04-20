@@ -28,6 +28,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AuthorController.class)
@@ -63,7 +64,14 @@ class AuthorControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "test_user", password = "test_password")
+    void all302() throws Exception {
+        mvc.perform(get("/authors"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("http://localhost/login.html"));
+    }
+
+    @Test
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_AUTHOR")
     void addAuthor() throws Exception {
         var firstName = "fName";
         var lastName = "lName";
@@ -80,9 +88,33 @@ class AuthorControllerTest {
         assertThat(modelAndView.getViewName(), Matchers.equalTo("redirect:/author/" + author.getId()));
     }
 
+    @Test
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_OTHER")
+    void addAuthor403() throws Exception {
+        var firstName = "fName";
+        var lastName = "lName";
+
+        mvc.perform(post("/author/add")
+                .param("firstName", firstName)
+                .param("lastName", lastName)
+        ).andExpect(status().isForbidden());
+    }
+
+    @Test
+    void addAuthor302() throws Exception {
+        var firstName = "fName";
+        var lastName = "lName";
+
+        mvc.perform(post("/author/add")
+                .param("firstName", firstName)
+                .param("lastName", lastName)
+        ).andExpect(status().is3xxRedirection())
+                .andReturn().getModelAndView();
+    }
+
     @ParameterizedTest
     @MethodSource("authorProvider")
-    @WithMockUser(username = "test_user", password = "test_password")
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_AUTHOR")
     void author(Long authorId, Optional<Author> author) throws Exception {
         when(authorService.withId(authorId)).thenReturn(author);
         var books = List.of(mock(Book.class));
@@ -103,6 +135,20 @@ class AuthorControllerTest {
         }
     }
 
+    @Test
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_OTHER")
+    void author403() throws Exception {
+        mvc.perform(get("/author/123"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void author302() throws Exception {
+        mvc.perform(get("/author/123"))
+                .andExpect(status().is3xxRedirection())
+                .andReturn().getModelAndView();
+    }
+
     private static Stream<Arguments> authorProvider() {
         return StreamEx.of(
                 Arguments.of(1L, Optional.of(mock(Author.class))),
@@ -111,7 +157,7 @@ class AuthorControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "test_user", password = "test_password")
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_AUTHOR")
     void delete() throws Exception {
         var authorId = 42L;
         var modelAndView = mvc.perform(post("/author/" + authorId + "/delete"))
@@ -121,4 +167,21 @@ class AuthorControllerTest {
         verify(authorService).removeAuthor(authorId);
         assertThat(modelAndView.getViewName(), Matchers.equalTo("redirect:/authors"));
     }
+
+    @Test
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_OTHER")
+    void delete403() throws Exception {
+        var authorId = 42L;
+        mvc.perform(post("/author/" + authorId + "/delete"))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void delete302() throws Exception {
+        var authorId = 42L;
+        mvc.perform(post("/author/" + authorId + "/delete"))
+                .andExpect(status().is3xxRedirection())
+                .andReturn().getModelAndView();
+    }
+
 }
