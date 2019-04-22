@@ -1,2 +1,5 @@
-USERNAME,PASSWORD
-user,password123
+USERNAME,PASSWORD,ROLES
+user,password123,"BOOK,AUTHOR,GENRE"
+genre_user,genre,"GENRE"
+author_user,author,"AUTHOR"
+book_user,book,"BOOK"

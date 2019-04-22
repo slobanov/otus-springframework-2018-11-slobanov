@@ -14,5 +14,6 @@ public class MongodbUser {
     private ObjectId id;
     private String userName;
     private String password;
+    private String roleString;
 
 }

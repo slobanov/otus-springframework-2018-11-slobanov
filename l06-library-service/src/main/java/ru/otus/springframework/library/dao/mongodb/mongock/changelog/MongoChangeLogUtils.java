@@ -162,7 +162,8 @@ class MongoChangeLogUtils {
                 MongodbUser.class,
                 u -> {},
                 "userName",
-                "password"
+                "password",
+                "roleString"
         );
         var passwordEncoder = new BCryptPasswordEncoder();
         users.forEach(u -> u.setPassword(passwordEncoder.encode(u.getPassword())));
