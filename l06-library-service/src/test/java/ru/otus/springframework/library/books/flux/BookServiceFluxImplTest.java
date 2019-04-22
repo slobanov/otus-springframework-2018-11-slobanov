@@ -53,6 +53,7 @@ class BookServiceFluxImplTest {
         return List.of(mock(Book.class), mock(Book.class));
     }
 
+    /** @noinspection unchecked*/
     @Test
     void writtenBy() {
         var authorId = 1L;
@@ -67,6 +68,7 @@ class BookServiceFluxImplTest {
                 .verifyComplete();
     }
 
+    /** @noinspection unchecked*/
     @Test
     void ofGenre() {
         var genreString = "genre";
@@ -207,6 +209,7 @@ class BookServiceFluxImplTest {
         verify(bookRepository).findByIsbn(isbn);
     }
 
+    /** @noinspection unchecked, unchecked */
     @Test
     void addAuthor() {
         var bookId = 1L;
@@ -228,6 +231,7 @@ class BookServiceFluxImplTest {
         verify(authorRepository).findById(authorId);
     }
 
+    /** @noinspection unchecked, unchecked */
     @Test
     void addGenre() {
         var bookIsbn = "isbn";

@@ -27,6 +27,7 @@ import java.util.stream.Stream;
 
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.*;
 import static org.assertj.core.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.verify;
@@ -68,9 +69,17 @@ class BookRestControllerTest {
         assertThat(asList(booksRequest.as(Book[].class)), equalTo(books));
     }
 
+    @Test
+    void all302() {
+        get("/api/v2/book")
+                .then()
+                .statusCode(302)
+                .header("Location", is("http://localhost/login.html"));
+    }
+
     @ParameterizedTest
     @MethodSource("bookProvider")
-    @WithMockUser(username = "test_user", password = "test_password")
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_BOOK")
     void book(String isbn, Optional<Book> book) {
         when(bookService.withIsbn(isbn)).thenReturn(book);
 
@@ -86,6 +95,20 @@ class BookRestControllerTest {
         verify(bookService).withIsbn(isbn);
     }
 
+    @Test
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_OTHER")
+    void book403() {
+        get("/api/v2/book/123")
+                .then().statusCode(403);
+    }
+
+    @Test
+    void book302() {
+        get("/api/v2/book/123")
+                .then().statusCode(302)
+                .header("Location", is("http://localhost/login.html"));
+    }
+
     private static Stream<Arguments> bookProvider() {
         return StreamEx.of(
                 Arguments.of("123", Optional.of(dummyBook("123"))),
@@ -94,7 +117,7 @@ class BookRestControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "test_user", password = "test_password")
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_BOOK")
     void addBook() {
         var isbn = "123";
         var title = "Title";
@@ -116,7 +139,42 @@ class BookRestControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "test_user", password = "test_password")
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_OTHER")
+    void addBook403() {
+        var isbn = "123";
+        var title = "Title";
+        var authorIds = List.of(1L, 2L);
+        var genres = List.of("a", "b");
+
+        with()
+                .queryParam("isbn", isbn)
+                .queryParam("title", title)
+                .queryParam("authorIds", authorIds)
+                .queryParam("genres", genres)
+                .post("/api/v2/book")
+                .then().statusCode(403);
+    }
+
+    @Test
+    void addBook302() {
+        var isbn = "123";
+        var title = "Title";
+        var authorIds = List.of(1L, 2L);
+        var genres = List.of("a", "b");
+
+        with()
+                .queryParam("isbn", isbn)
+                .queryParam("title", title)
+                .queryParam("authorIds", authorIds)
+                .queryParam("genres", genres)
+                .post("/api/v2/book")
+                .then().statusCode(302)
+                .header("Location", is("http://localhost/login.html"));
+
+    }
+
+    @Test
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_BOOK")
     void deleteBook() {
         var isbn = "123";
         var book = dummyBook(isbn);
@@ -129,7 +187,23 @@ class BookRestControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "test_user", password = "test_password")
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_OTHER")
+    void deleteBook403() {
+        var isbn = "123";
+        delete("/api/v2/book/" + isbn)
+                .then().statusCode(403);
+    }
+
+    @Test
+    void deleteBook302() {
+        var isbn = "123";
+        delete("/api/v2/book/" + isbn)
+                .then().statusCode(302)
+                .header("Location", is("http://localhost/login.html"));
+    }
+
+    @Test
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_BOOK")
     void addAuthor() {
         var isbn = "123";
         var book = dummyBook(isbn);
@@ -146,7 +220,27 @@ class BookRestControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "test_user", password = "test_password")
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_OTHER")
+    void addAuthor403() {
+        var isbn = "123";
+        with()
+                .queryParam("authorId", 1L)
+                .post("api/v2/book/" + isbn + "/authors")
+                .then().statusCode(403);
+    }
+
+    @Test
+    void addAuthor302() {
+        var isbn = "123";
+        with()
+                .queryParam("authorId", 1L)
+                .post("api/v2/book/" + isbn + "/authors")
+                .then().statusCode(302)
+                .header("Location", is("http://localhost/login.html"));
+    }
+
+    @Test
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_BOOK")
     void addGenre() {
         var isbn = "123";
         var book = dummyBook(isbn);
@@ -163,7 +257,31 @@ class BookRestControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "test_user", password = "test_password")
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_OTHER")
+    void addGenre403() {
+        var isbn = "123";
+        var genre = "g1";
+
+        with()
+                .queryParam("genre", genre)
+                .post("api/v2/book/" + isbn + "/genres")
+                .then().statusCode(403);
+    }
+
+    @Test
+    void addGenre302() {
+        var isbn = "123";
+        var genre = "g1";
+
+        with()
+                .queryParam("genre", genre)
+                .post("api/v2/book/" + isbn + "/genres")
+                .then().statusCode(302)
+                .header("Location", is("http://localhost/login.html"));
+    }
+
+    @Test
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_BOOK")
     void addComment() {
         var isbn = "123";
         var book = dummyBook(isbn);
@@ -181,7 +299,31 @@ class BookRestControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "test_user", password = "test_password")
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_OTHER")
+    void addComment403() {
+        var isbn = "123";
+        var comment = "comment";
+
+        with()
+                .queryParam("comment", comment)
+                .post("api/v2/book/" + isbn + "/comments")
+                .then().statusCode(403);
+    }
+
+    @Test
+    void addComment302() {
+        var isbn = "123";
+        var comment = "comment";
+
+        with()
+                .queryParam("comment", comment)
+                .post("api/v2/book/" + isbn + "/comments")
+                .then().statusCode(302)
+                .header("Location", is("http://localhost/login.html"));
+    }
+
+    @Test
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_BOOK")
     void comments() {
         var isbn = "qwe";
         var comment = new Comment(
@@ -204,6 +346,22 @@ class BookRestControllerTest {
         commentsRequest.then().statusCode(200);
         verify(commentService).commentsFor(isbn);
         assertThat(asList(commentsRequest.as(Comment[].class)), equalTo(comments));
+    }
+
+    @Test
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_OTHER")
+    void comments403() {
+        var isbn = "qwe";
+         get("/api/v2/book/" + isbn + "/comments")
+                 .then().statusCode(403);
+    }
+
+    @Test
+    void comments302() {
+        var isbn = "qwe";
+        get("/api/v2/book/" + isbn + "/comments")
+                .then().statusCode(302)
+                .header("Location", is("http://localhost/login.html"));
     }
 
     private static Book dummyBook(String isbn) {

@@ -21,6 +21,7 @@ import java.util.Set;
 
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.*;
 import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.Mockito.verify;
@@ -60,7 +61,15 @@ class GenreRestControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "test_user", password = "test_password")
+    void all302() {
+        get("/api/v2/genre")
+                .then()
+                .statusCode(302)
+                .header("Location", is("http://localhost/login.html"));
+    }
+
+    @Test
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_GENRE")
     void addGenre() {
         var genre = "123";
         var genreObj = new Genre(genre);
@@ -76,7 +85,28 @@ class GenreRestControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "test_user", password = "test_password")
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_OTHER")
+    void addGenre403() {
+        var genre = "123";
+        with()
+                .queryParam("genre", genre)
+                .post("/api/v2/genre")
+                .then().statusCode(403);
+    }
+
+    @Test
+    void addGenre302() {
+        var genre = "123";
+        with()
+                .queryParam("genre", genre)
+                .post("/api/v2/genre")
+                .then()
+                .statusCode(302)
+                .header("Location", is("http://localhost/login.html"));
+    }
+
+    @Test
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_GENRE")
     void deleteGenre() {
         var genre = "123";
         var genreObj = new Genre(genre);
@@ -90,7 +120,25 @@ class GenreRestControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "test_user", password = "test_password")
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_OTHER")
+    void deleteGenre403() {
+        var genre = "123";
+        delete("/api/v2/genre/" + genre)
+                .then()
+                .statusCode(403);
+    }
+
+    @Test
+    void deleteGenre302() {
+        var genre = "123";
+        delete("/api/v2/genre/" + genre)
+                .then()
+                .statusCode(302)
+                .header("Location", is("http://localhost/login.html"));
+    }
+
+    @Test
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_GENRE")
     void booksOfGenre() {
         var genre = "123";
         var book = new Book(1L, "123", "title", Set.of(), Set.of());
@@ -101,5 +149,23 @@ class GenreRestControllerTest {
         authorBooksRequest.then().statusCode(200);
         assertThat(asList(authorBooksRequest.as(Book[].class)), equalTo(List.of(book)));
         verify(bookService).ofGenre(genre);
+    }
+
+    @Test
+    @WithMockUser(username = "test_user", password = "test_password", authorities = "ROLE_OTHER")
+    void booksOfGenre403() {
+        var genre = "123";
+        get("/api/v2/genre/" + genre + "/books")
+                .then()
+                .statusCode(403);
+    }
+
+    @Test
+    void booksOfGenre302() {
+        var genre = "123";
+        get("/api/v2/genre/" + genre + "/books")
+                .then()
+                .statusCode(302)
+                .header("Location", is("http://localhost/login.html"));
     }
 }
