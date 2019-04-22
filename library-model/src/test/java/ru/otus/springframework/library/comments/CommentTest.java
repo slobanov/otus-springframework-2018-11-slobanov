@@ -23,7 +23,7 @@ class CommentTest {
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         var comment = new Comment(1L, mock(Book.class), "", dt);
         assertThat(comment.getPrettyDate(), equalTo(prettyDate));
-        
+
     }
 
     private static Stream<Arguments> commentsProvider() {

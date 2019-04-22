@@ -2,6 +2,7 @@ package ru.otus.springframework.library.secutiry;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
@@ -23,11 +24,6 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private final UserDetailsService userDetailsService;
-
-    @Override
-    public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/");
-    }
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
@@ -58,6 +54,18 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(AuthenticationManagerBuilder builder) throws Exception {
         builder.userDetailsService(userDetailsService);
+    }
+
+}
+
+@Profile({"rest", "mvc"})
+@EnableWebSecurity
+@ConditionalOnMissingBean(SecurityConfiguration.class)
+class SecurityConfigurationFallBack extends WebSecurityConfigurerAdapter {
+
+    @Override
+    public void configure(WebSecurity web) {
+        web.ignoring().antMatchers("/**/*").antMatchers("/");
     }
 
 }

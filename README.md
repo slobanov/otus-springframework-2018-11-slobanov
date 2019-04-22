@@ -10,6 +10,8 @@
 Contents:
 * [l01-student-testing](l01-student-testing)
 * [l06-library-service](l06-library-service)
+* [library-model](library-model)
+* [l23-migration-tool](l23-migration-tool)
 - - - -
 
 Sergey Lobanov

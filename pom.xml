@@ -19,6 +19,8 @@
     <modules>
         <module>l01-student-testing</module>
         <module>l06-library-service</module>
+        <module>l23-migration-tool</module>
+        <module>library-model</module>
     </modules>
 
     <developers>
@@ -55,6 +57,8 @@
         <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
         <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
         <sonar.language>java</sonar.language>
+
+        <library-model-version>1.0.0</library-model-version>
     </properties>
 
     <build>
@@ -222,6 +226,11 @@
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
                 <artifactId>jackson-dataformat-csv</artifactId>
                 <version>${jackson.csv.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.otus.springframework</groupId>
+                <artifactId>library-model</artifactId>
+                <version>${library-model-version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
