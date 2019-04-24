@@ -3,7 +3,10 @@ package ru.otus.springframework.library.authors;
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 import static java.lang.String.format;
 

@@ -1,0 +1,19 @@
+library:
+  migration.chunk.size: "5"
+
+spring:
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/postgres"
+    username: "postgres"
+    password: "password123"
+
+  data:
+    mongodb:
+      database: "library"
+      uri: "mongodb://localhost:27017"
+      repositories.type: "NONE"
+
+  banner.location: "classpath:/banner.txt"
+
+logging:
+  root: "INFO"
