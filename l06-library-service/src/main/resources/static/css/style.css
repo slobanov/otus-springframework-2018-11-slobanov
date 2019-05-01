@@ -131,3 +131,13 @@ input.form-control:focus {
   background-color: #ffdce0;
 }
 
+.order-btn {
+  width: 100%;
+  max-width: 300px;
+}
+
+#order-div {
+  padding: 10px;
+  justify-content: center;
+  display: flex;
+}

@@ -17,6 +17,10 @@ __NB__: By default, library app runs on 8080 port and uses [MongoDB](https://www
 and expects to find one at `localhost:27017`. For default `rest` profile there is REST API with [Swagger](https://swagger.io/) assets
 (which means /swagger-ui.html and /v2/api-docs are available).
 
+Also, for `rest` profile there is a feature of book delivery.
+It does nothing (except adding the comment to the book) and exists for
+[Spring Integration](https://spring.io/projects/spring-integration) application.
+
 All library endpoints require authentication (if using `rest` or `mvc` with `mongodb`). There are some predefined users: 
 
 | login       | password    | authorities          |

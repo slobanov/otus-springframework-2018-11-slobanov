@@ -116,4 +116,19 @@ add_comment = () => {
             $("form#add-comment").trigger("reset");
         }
     );
-}
+};
+
+place_order = () => $.ajax({
+    url: "/api/v2/order",
+    type: "POST",
+    data: JSON.stringify({ "isbn": context_book.isbn }),
+    contentType: "application/json; charset=utf-8",
+    dataType: "json",
+    success: ticket => {
+        context_book = ticket.book;
+        display_comments(context_book);
+        window.alert(`Your book will be delivered approximately at ${ticket.estimatedDeliveryDate}`);
+    },
+    error: () => window.alert("Sorry, something went terribly wrong...")
+});
+
