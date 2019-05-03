@@ -6,10 +6,21 @@ spring:
       - "mongodb"
       - "rest"
   banner.location: "classpath:/banner.txt"
-  liquibase:
-    change-log: "classpath:db/changelog/db.changelog-master.xml"
+  liquibase.change-log: "classpath:db/changelog/db.changelog-master.xml"
+  datasource.continue-on-error: "true"
 
-logging.level:
-  root: "INFO"
-  ru.otus: "DEBUG"
+management:
+  endpoint.health.show-details: "when-authorized"
+  endpoints.web.exposure.include:
+    - metrics
+    - health
+    - prometheus
+    - logfile
 
+  metrics.distribution.percentiles.http.server.requests: "0.95,0.99"
+
+logging:
+  file: "log/out.log"
+  level:
+    root: "INFO"
+    ru.otus: "DEBUG"
