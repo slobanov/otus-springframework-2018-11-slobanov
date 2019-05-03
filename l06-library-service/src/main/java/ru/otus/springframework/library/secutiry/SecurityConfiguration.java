@@ -51,6 +51,7 @@ class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .antMatchers(POST, "/api/v2/book").hasRole(BOOK_ROLE)
                     .antMatchers(DELETE, "/api/v2/book").hasRole(BOOK_ROLE)
                     .antMatchers("/api/v2/book/**/*").hasRole(BOOK_ROLE)
+                    .antMatchers(POST, "/api/v2/order").hasRole(BOOK_ROLE)
 
                     .antMatchers("/author/**/*").hasRole(AUTHOR_ROLE)
                     .antMatchers(POST, "/api/v2/author").hasRole(AUTHOR_ROLE)

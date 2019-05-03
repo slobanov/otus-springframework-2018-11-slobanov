@@ -34,8 +34,9 @@
 
     <div class="row">
 
-        <table class="col-6">
-            <tbody id="book">
+        <div class="col-6">
+            <table>
+                <tbody id="book">
                 <tr>
                     <td>ISBN</td>
                     <td id="isbn"></td>
@@ -56,8 +57,12 @@
                     <td>Comments</td>
                     <td id="comments"></td>
                 </tr>
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+            <div id="order-div">
+                <button class="btn order-btn" onclick="place_order()">Place Order</button>
+            </div>
+        </div>
 
         <div class="col-md-auto">
             <form class="col-md-auto" method="post" id="remove-book">
@@ -78,7 +83,6 @@
                 <input class="btn" type="submit" value="Add comment"/>
             </form>
         </div>
-
     </div>
 
 </main>

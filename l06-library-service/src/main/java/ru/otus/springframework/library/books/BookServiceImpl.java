@@ -17,7 +17,7 @@ import java.util.*;
 
 import static one.util.streamex.StreamEx.of;
 
-@Service
+@Service("bookService")
 @Slf4j
 @RequiredArgsConstructor
 @ConditionalOnMissingBean(BookServiceFlux.class)
