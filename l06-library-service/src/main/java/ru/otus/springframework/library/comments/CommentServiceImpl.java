@@ -3,6 +3,8 @@ package ru.otus.springframework.library.comments;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 import ru.otus.springframework.library.comments.flux.CommentServiceFlux;
 import ru.otus.springframework.library.dao.BookDAO;
@@ -11,7 +13,7 @@ import ru.otus.springframework.library.dao.CommentDAO;
 import java.util.Collections;
 import java.util.List;
 
-@Service
+@Service("commentService")
 @RequiredArgsConstructor
 @Slf4j
 @ConditionalOnMissingBean(CommentServiceFlux.class)
@@ -29,7 +31,7 @@ class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Comment newComment(String isbn, String text) {
+    public Comment newComment(@Payload String isbn, @Header String text) {
         log.debug("new comment for book with isbn [{}]: {}", isbn, text);
         var book = bookDAO.findByIsbn(isbn);
         log.debug("book with isbn [{}]: {}", isbn, book);
